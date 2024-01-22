@@ -1,0 +1,25 @@
+<style>
+  .furniture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+  }
+</style>
+
+  {% for item in furniture %}
+    <div class="furniture">
+        <h2>{{ item.get_furniture_type() }}</h2>
+        <p>Quantity: {{ item.get_furniture_quantity() }}</p>
+        <p>Category: {{ item.get_furniture_category() }}</p>
+        <p>Status: {{ item.get_furniture_status() }}</p>
+        <p>Price: {{ item.get_furniture_price() }}</p>
+        <p>Remarks: {{ item.get_furniture_remarks() }}</p>
+    </div>
+  {% endfor %}

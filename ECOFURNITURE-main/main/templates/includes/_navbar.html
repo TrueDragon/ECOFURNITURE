@@ -1,0 +1,86 @@
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">EcoFurniture</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav">
+
+<!-- dropDown-Home -->
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+
+<!-- dropDown-Home --> 
+        <li class="nav-item">
+          <a class="nav-link" href="/products">Products</a>
+        </li>
+
+<!-- dropDown-Manage User -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage Users</a>  
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/createUser">Create User</a></li>
+            <li>
+              <a class="dropdown-item" href="/retrieveUsers">Retrieve Users</a>
+            </li>
+          </ul>
+        </li>
+
+<!-- dropDown-Manage Reports -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage Reports</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/createReport">Create Report</a></li>
+            <li><a class="dropdown-item" href="/retrieveReport">Retrieve Report</a></li>
+          </ul>
+        </li>
+
+<!-- dropDown-Manage Customers -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage Customers</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/createCustomer">Create Customer</a></li>
+            <li><a class="dropdown-item" href="/retrieveCustomers">Retrieve Customers</a></li>
+          </ul>
+        </li>
+
+<!-- dropDown-Inventory -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Inventory</a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="/createFurniture">Add to Inventory</a>            
+            </li>
+            <li>
+              <a class="dropdown-item" href="/retrieveFurniture">Current Inventory</a>                  
+            </li>
+          </ul>
+        </li>
+
+<!-- dropDown-Payment -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Payment</a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="/createpayment">Add Payment info</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/retrievePayment">Current Payment Info</a>
+            </li>                                                                                                                                   
+          </ul> 
+        </li>
+
+<!-- dropDown-Manage Order -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage Orders</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/createOrder">Create Order</a></li>
+            <li><a class="dropdown-item" href="/retrieveOrders">Retrieve Orders</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

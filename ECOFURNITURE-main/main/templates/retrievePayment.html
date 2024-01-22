@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}EcoFurniture - Retrieve Users{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Retrieve Payment Info</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no users.</p>
+  {% elif count == 1 %}
+  <p>There is 1 user.</p>
+  {% else %}
+  <p>There are {{ count }} users.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Cust ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Card Number</th>
+        <th>Expiration date</th>
+        <th>CVV</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for payment in payment_list %}
+     <tr>
+        <td>{{ payment.get_cust_id() }}</td>
+        <td>{{ payment.get_first_name() }}</td>
+        <td>{{ payment.get_last_name() }}</td>
+        <td>{{ payment.get_card_no() }}</td>
+        <td>{{ payment.get_exp() }}</td>
+        <td>{{ payment.get_cvv() }}</td>
+        <td><a href="/updatePayment/{{payment.get_cust_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_payment', id=payment.get_cust_id())}}" method="POST">
+<!--            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{payment.get_first_name()}}?');">-->
+<!-- Button to Open the Modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{payment.get_cust_id()}}">
+  Delete
+</button>
+
+<!-- The Modal -->
+<div class="modal" id="myModal_{{payment.get_cust_id()}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Confirmation</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to delete {{payment.get_first_name()}}?
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <input type="submit" value="Delete" class="btn btn-danger">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+          </form>
+        </td>
+     </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %} {% block title %}EcoFurniture - Inventory{%
+endblock %} {% block content %}
+<h1 class="display-4">INVENTORY</h1>
+<div>
+  {% if count == 0 %}
+  <p>No furniture is currently registered.</p>
+  {% elif count == 1 %}
+  <p>There is 1 type of furniture currently registered.</p>
+  {% else %}
+  <p>There are {{ count }} types of furniture currently registered.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Furniture ID</th>
+        <th>Furniture Type</th>
+        <th>Quantity</th>
+        <th>Furniture Category</th>
+        <th>Furniture Status</th>
+        <th>Unit Price ($)</th>
+        <th>Remarks</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for furniture in furniture_list %}
+      <tr>
+        <td>{{ furniture.get_furniture_id() }}</td>
+
+        {% if furniture.get_furniture_type() == "Table/Desks"%}
+        <td>Table/Desk(s)</td>
+        {% elif furniture.get_furniture_type() == "Chairs"%}
+        <td>Chair(s)</td>
+        {% elif furniture.get_furniture_type() == "Sofas"%}
+        <td>Sofa(s)</td>
+        {% elif furniture.get_furniture_type() == "Bed Frames"%}
+        <td>Bed Frame(s)</td>
+        {% elif furniture.get_furniture_type() == "Wardrobes"%}
+        <td>Wardrobe(s)</td>
+        {% elif furniture.get_furniture_type() == "Shelves"%}
+        <td>Shelve(s)</td>
+        {% endif %}
+
+        <td>{{ furniture.get_furniture_quantity() }}</td>
+
+        {% if furniture.get_furniture_category() == "New" %}
+        <td>New</td>
+        {% elif furniture.get_furniture_category() == "Old" %}
+        <td>Old</td>
+        {% elif furniture.get_furniture_category() == "Upcycled" %}
+        <td>Upcycled</td>
+        {% endif %} {% if furniture.get_furniture_status() == "For Sale" %}
+        <td>For Sale</td>
+        {% elif furniture.get_furniture_status() == "Not For Sale" %}
+        <td>Not For Sale</td>
+        {% endif %}
+
+        <td>{{ furniture.get_furniture_price() }}</td>
+
+        <td>{{ furniture.get_furniture_remarks() }}</td>
+
+        <td>
+          <a href="/updateFurniture/{{furniture.get_furniture_id()}}" class="btn btn-warning"
+            >Update</a
+          >
+        </td>
+        <td>
+          <form
+            action="{{url_for('delete_furniture', id=furniture.get_furniture_id())}}"
+            method="POST"
+          >
+           
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#myModal_{{furniture.get_furniture_id()}}"
+            >
+              Delete
+            </button>
+
+            <!-- The Modal -->
+            <div class="modal" id="myModal_{{furniture.get_furniture_id()}}">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                    ></button>
+                  </div>
+
+                  <!-- Modal body -->
+                  <div class="modal-body">
+                    Are you sure you want to delete {{furniture.get_furniture_type()}}, ID: {{furniture.get_furniture_id()}}?
+                  </div>
+
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    <input
+                      type="submit"
+                      value="Delete"
+                      class="btn btn-danger"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

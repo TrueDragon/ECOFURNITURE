@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--you know what this is -->
+    <title>EcoFurniture - Register</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      .header {
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .title {
+        color: #fff;
+      }
+
+      .container {
+        margin: 20px;
+      }
+
+      .error-message {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <!--seriously -->
+      <h1 class="title">Ciel Cars</h1>
+    </div>
+    <div class="container">
+      <h2>Register</h2>
+      <!--it gives an error lmao (jk) -->
+      {% if error %}
+      <p class="error-message">{{ error }}</p>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('register') }}">
+        <!--this just puts the inputs -->
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit">Register</button>
+      </form>
+      <!-- no i dont have an account, whats an account anyway -->
+      <p>
+        Already have an account?
+        <a href="{{ url_for('login') }}">Sign in here</a>.
+      </p>
+    </div>
+  </body>
+</html>

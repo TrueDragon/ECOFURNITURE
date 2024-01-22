@@ -1,0 +1,85 @@
+{% extends "base.html" %} {% block title %}EcoF - Retrieve
+Report{% endblock %} {% block content %}
+<h1 class="display-4">Retrieve Report/h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no reports.</p>
+  {% elif count == 1 %}
+  <p>There is 1 report.</p>
+  {% else %}
+  <p>There are {{ count }} reports.</p>
+  {% endif %}
+</div>
+<div>
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>email</th>
+        <th>issue</th>
+        <th>remark</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for report in report_list %}
+     <tr>
+        <td>{{ report.get_email() }}</td>
+        <td>{{ report.get_issue() }}</td>
+        <td>{{ report.get_remark() }}</td>
+        {% if user.get_membership() == "F" %}
+        <td>Fellow</td>
+        {% elif user.get_membership() == "S" %}
+        <td>Senior</td>
+        {% elif user.get_membership() == "P" %}
+        <td>Professional</td>
+        {% endif %}
+        <td>{{ user.get_remarks() }}</td>
+        <td><a href="/updateReport/{{report.get_id()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('delete_report', id=report.get_id())}}" method="POST">
+<!--            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {{user.get_first_name()}} {{user.get_last_name()}}?');">-->
+<!-- Button to Open the Modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{report.get_id()}}">
+  Delete
+</button>
+
+<!-- The Modal -->
+<div class="modal" id="myModal_{{report.get_user_id()}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Confirmation</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to delete {{report.get_email()}} {{report.get_issue()}}?
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <input type="submit" value="Delete" class="btn btn-danger">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+          </form>
+        </td>
+     </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+
+
+
+</div>
+{% endblock %}

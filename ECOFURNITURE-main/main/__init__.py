@@ -56,18 +56,24 @@ def default():
 def products():
     return render_template('products.html')
 
-
-# THIS IS FOR LINKING NAVBAR IN PRODUCT WEBSITE #
-
-
 @app.route('/living_room')
 def living_room():
     return render_template('living_room.html')
 
-
+# testing !!!
 @app.route('/bedroom')
 def bedroom():
-    return render_template('bedroom.html')
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        furniture_list.append(furniture)
+
+    return render_template('bedroom.html', count=len(furniture_list), furniture_list=furniture_list)
 
 
 @app.route('/contact_us')
@@ -1076,39 +1082,6 @@ def admin_edit():
             write_admins_to_file(admins)
 
     return redirect(url_for('admin', error=error))
-
-# furniture stuff
-
-@app.route('/bedroom')
-def retrieve_product_furniture():
-    furniture_dict = {}
-    db = shelve.open('furniture.db', 'r')
-    furniture_dict = db['Furniture']
-    db.close()
-
-    furniture_list = []
-    for key in furniture_dict.keys():
-        furniture = furniture_dict.get(key)
-        furniture_list.append(furniture)
-
-    return render_template('furniture_listing.html', count=len(furniture_list), furniture_list=furniture_list)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @app.route('/signout')

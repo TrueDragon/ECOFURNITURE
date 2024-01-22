@@ -1,25 +1,54 @@
+{% block content %}
 <style>
-  .furniture {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid var(--primary-color);
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    color: var(--text-dark);
-  }
+    .furniture-grid {
+        display: grid;
+        padding: 25px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    .furniture-item {
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+    }
+    .furniture-item h2 {
+        margin: 0;
+        font-size: 1.5em;
+    }
+    .furniture-item p {
+        margin: 0;
+    }
+
 </style>
 
-  {% for item in furniture %}
-    <div class="furniture">
-        <h2>{{ item.get_furniture_type() }}</h2>
-        <p>Quantity: {{ item.get_furniture_quantity() }}</p>
-        <p>Category: {{ item.get_furniture_category() }}</p>
-        <p>Status: {{ item.get_furniture_status() }}</p>
-        <p>Price: {{ item.get_furniture_price() }}</p>
-        <p>Remarks: {{ item.get_furniture_remarks() }}</p>
+<div class="furniture-grid">
+    {% for furniture in furniture_list %}
+    {% if furniture.get_furniture_category() != "Old" and furniture.get_furniture_status() == "For Sale" %}
+    <div class="furniture-item">
+        {% if furniture.get_furniture_type() == "Table/Desks"%}
+        <h2>Table/Desk</h2>
+        {% elif furniture.get_furniture_type() == "Chairs"%}
+        <h2>Chair</h2>
+        {% elif furniture.get_furniture_type() == "Sofas"%}
+        <h2>Sofa</h2>
+        {% elif furniture.get_furniture_type() == "Bed Frames"%}
+        <h2>Bed Frame</h2>
+        {% elif furniture.get_furniture_type() == "Wardrobes"%}
+        <h2>Wardrobe</h2>
+        {% elif furniture.get_furniture_type() == "Shelves"%}
+        <h2>Shelve</h2>
+        {% endif %}
+        <p>Quantity: {{ furniture.get_furniture_quantity() }}</p>
+        <p>Category:
+            {% if furniture.get_furniture_category() == "New" %}
+            New
+            {% elif furniture.get_furniture_category() == "Upcycled" %}
+            Upcycled
+            {% endif %}
+        </p>
+        <p>Unit Price: S${{ furniture.get_furniture_price() }}</p>
     </div>
-  {% endfor %}
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

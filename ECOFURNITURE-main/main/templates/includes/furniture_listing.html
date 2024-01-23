@@ -40,8 +40,6 @@
     }
 
 
-
-
 </style>
 
 <!--DO NOT PUT SPECIFIC HTML STUFF HERE-->
@@ -78,28 +76,21 @@
          data-price="{{ furniture.get_furniture_price() }}" data-category="{{ furniture.get_furniture_category() }}">
         <h2>{{ furniture.get_furniture_name() }}</h2>
         {% if furniture.get_furniture_type() == "Table/Desks"%}
-        <h2>Table/Desk</h2>
+        <h2>Table/Desk - {{ furniture.get_furniture_category() }}</h2>
         {% elif furniture.get_furniture_type() == "Chairs"%}
-        <h2>Chair</h2>
+        <h2>Chair - {{ furniture.get_furniture_category() }}</h2>
         {% elif furniture.get_furniture_type() == "Sofas"%}
-        <h2>Sofa</h2>
+        <h2>Sofa - {{ furniture.get_furniture_category() }}</h2>
         {% elif furniture.get_furniture_type() == "Bed Frames"%}
-        <h2>Bed Frame</h2>
+        <h2>Bed Frame - {{ furniture.get_furniture_category() }}</h2>
         {% elif furniture.get_furniture_type() == "Wardrobes"%}
-        <h2>Wardrobe</h2>
+        <h2>Wardrobe - {{ furniture.get_furniture_category() }}</h2>
         {% elif furniture.get_furniture_type() == "Shelves"%}
-        <h2>Shelve</h2>
+        <h2>Shelve - {{ furniture.get_furniture_category() }}</h2>
         {% elif furniture.get_furniture_type() == "Lights"%}
-        <h2>Lights</h2>
+        <h2>Lights - {{ furniture.get_furniture_category() }}</h2>
         {% endif %}
         <p>Quantity: {{ furniture.get_furniture_quantity() }}</p>
-        <p>Category:
-            {% if furniture.get_furniture_category() == "New" %}
-            New
-            {% elif furniture.get_furniture_category() == "Upcycled" %}
-            Upcycled
-            {% endif %}
-        </p>
         <p>Unit Price: S${{ furniture.get_furniture_price() }}</p>
     </div>
     {% endif %}
@@ -108,75 +99,74 @@
 {% endblock %}
 
 
-
 <!--JAVASCRIPT STUFF FOR THE FILTERS-->
 <script>
-document.getElementById('typeFilter').addEventListener('change', function() {
-    var type = this.value;
-    var items = document.getElementsByClassName('furniture-item');
-    for (var i = 0; i < items.length; i++) {
-        if (type === '' || items[i].getAttribute('data-type') === type) {
-            items[i].style.display = '';
-        } else {
-            items[i].style.display = 'none';
+    document.getElementById('typeFilter').addEventListener('change', function() {
+        var type = this.value;
+        var items = document.getElementsByClassName('furniture-item');
+        for (var i = 0; i < items.length; i++) {
+            if (type === '' || items[i].getAttribute('data-type') === type) {
+                items[i].style.display = '';
+            } else {
+                items[i].style.display = 'none';
+            }
         }
-    }
-});
-
-function sortItems(ascending) {
-    var items = Array.from(document.getElementsByClassName('furniture-item'));
-    items.sort(function(a, b) {
-        var priceA = parseFloat(a.getAttribute('data-price'));
-        var priceB = parseFloat(b.getAttribute('data-price'));
-        return ascending ? priceA - priceB : priceB - priceA;
     });
-    var grid = document.getElementsByClassName('furniture-grid')[0];
-    items.forEach(function(item) {
-        grid.appendChild(item);
+
+    function sortItems(ascending) {
+        var items = Array.from(document.getElementsByClassName('furniture-item'));
+        items.sort(function(a, b) {
+            var priceA = parseFloat(a.getAttribute('data-price'));
+            var priceB = parseFloat(b.getAttribute('data-price'));
+            return ascending ? priceA - priceB : priceB - priceA;
+        });
+        var grid = document.getElementsByClassName('furniture-grid')[0];
+        items.forEach(function(item) {
+            grid.appendChild(item);
+        });
+    }
+
+    document.getElementById('sortOrder').addEventListener('change', function() {
+        sortItems(this.value === 'asc');
     });
-}
 
-document.getElementById('sortOrder').addEventListener('change', function() {
-    sortItems(this.value === 'asc');
-});
-
-function filterItemsByCategory(category) {
-    var items = document.getElementsByClassName('furniture-item');
-    for (var i = 0; i < items.length; i++) {
-        var itemCategory = items[i].getAttribute('data-category');
-        if (category === "" || itemCategory === category) {
-            items[i].style.display = "";
-        } else {
-            items[i].style.display = "none";
+    function filterItemsByCategory(category) {
+        var items = document.getElementsByClassName('furniture-item');
+        for (var i = 0; i < items.length; i++) {
+            var itemCategory = items[i].getAttribute('data-category');
+            if (category === "" || itemCategory === category) {
+                items[i].style.display = "";
+            } else {
+                items[i].style.display = "none";
+            }
         }
     }
-}
 
-document.getElementById('sortCategory').addEventListener('change', function() {
-    filterItemsByCategory(this.value);
-});
+    document.getElementById('sortCategory').addEventListener('change', function() {
+        filterItemsByCategory(this.value);
+    });
 
-function filterItemsByCategoryAndType(category) {
-    var type = document.getElementById('typeFilter').value;
-    var items = document.getElementsByClassName('furniture-item');
-    for (var i = 0; i < items.length; i++) {
-        var itemCategory = items[i].getAttribute('data-category');
-        var itemType = items[i].getAttribute('data-type');
-        if ((category === "" || itemCategory === category) && (type === "" || itemType === type)) {
-            items[i].style.display = "";
-        } else {
-            items[i].style.display = "none";
+    function filterItemsByCategoryAndType(category) {
+        var type = document.getElementById('typeFilter').value;
+        var items = document.getElementsByClassName('furniture-item');
+        for (var i = 0; i < items.length; i++) {
+            var itemCategory = items[i].getAttribute('data-category');
+            var itemType = items[i].getAttribute('data-type');
+            if ((category === "" || itemCategory === category) && (type === "" || itemType === type)) {
+                items[i].style.display = "";
+            } else {
+                items[i].style.display = "none";
+            }
         }
     }
-}
 
-document.getElementById('sortCategory').addEventListener('change', function() {
-    filterItemsByCategoryAndType(this.value);
-});
+    document.getElementById('sortCategory').addEventListener('change', function() {
+        filterItemsByCategoryAndType(this.value);
+    });
 
-document.getElementById('typeFilter').addEventListener('change', function() {
-    filterItemsByCategoryAndType(document.getElementById('sortCategory').value);
-});
+    document.getElementById('typeFilter').addEventListener('change', function() {
+        filterItemsByCategoryAndType(document.getElementById('sortCategory').value);
+    });
 
 
 </script>

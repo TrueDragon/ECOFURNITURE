@@ -1,10 +1,12 @@
 # Furniture class
 class Furniture:
     count_id = 0
-    
-    def __init__(self, furniture_type, furniture_quantity, furniture_category, furniture_status, furniture_price, furniture_remarks):
+
+    def __init__(self,furniture_type, furniture_name, furniture_quantity, furniture_category, furniture_status,
+                 furniture_price, furniture_remarks):
         Furniture.count_id += 1
         self.__furniture_id = Furniture.count_id
+        self.__furniture_name = furniture_name
         self.__furniture_quantity = furniture_quantity
         self.__furniture_type = furniture_type
         self.__furniture_status = furniture_status
@@ -17,7 +19,13 @@ class Furniture:
 
     def get_furniture_id(self):
         return self.__furniture_id
-    
+
+    def set_furniture_name(self, furniture_name):
+        self.__furniture_name = furniture_name
+
+    def get_furniture_name(self):
+        return self.__furniture_name
+
     def set_furniture_quantity(self, furniture_quantity):
         self.__furniture_quantity = furniture_quantity
 
@@ -41,7 +49,7 @@ class Furniture:
 
     def get_furniture_category(self):
         return self.__furniture_category
-    
+
     def set_furniture_price(self, furniture_price):
         self.__furniture_price = furniture_price
 
@@ -50,7 +58,6 @@ class Furniture:
 
     def set_furniture_remarks(self, furniture_remarks):
         self.__furniture_remarks = furniture_remarks
-    
+
     def get_furniture_remarks(self):
         return self.__furniture_remarks
-    

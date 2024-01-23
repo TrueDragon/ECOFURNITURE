@@ -56,9 +56,11 @@ def default():
 def products():
     return render_template('products.html')
 
+
 @app.route('/living_room')
 def living_room():
     return render_template('living_room.html')
+
 
 # testing !!!
 @app.route('/bedroom')
@@ -179,6 +181,7 @@ def create_furniture():
             print("Error in retrieving Users from user.db.")
 
         furniture = Furniture.Furniture(create_furniture_form.furniture_type.data,
+                                        create_furniture_form.furniture_name.data,
                                         create_furniture_form.furniture_quantity.data,
                                         create_furniture_form.furniture_category.data,
                                         create_furniture_form.furniture_status.data,
@@ -363,6 +366,7 @@ def update_furniture(id):
 
         furniture = furniture_dict.get(id)
         furniture.set_furniture_type(update_furniture_form.furniture_type.data)
+        furniture.set_furniture_name(update_furniture_form.furniture_name.data)
         furniture.set_furniture_quantity(
             update_furniture_form.furniture_quantity.data)
         furniture.set_furniture_category(
@@ -387,6 +391,7 @@ def update_furniture(id):
 
         furniture = furniture_dict.get(id)
         update_furniture_form.furniture_type.data = furniture.get_furniture_type()
+        update_furniture_form.furniture_name.data = furniture.get_furniture_name()
         update_furniture_form.furniture_quantity.data = furniture.get_furniture_quantity()
         update_furniture_form.furniture_category.data = furniture.get_furniture_category()
         update_furniture_form.furniture_status.data = furniture.get_furniture_status()

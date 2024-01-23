@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css"
-      rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css"
+            rel="stylesheet"
     />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
@@ -317,6 +317,14 @@
         background-size: cover;
       }
 
+      .title {
+        font-size: 2em;
+        color: #333;
+        text-align: left;
+        padding: 20px;
+        margin-left: 20px;
+      }
+
       .banner__3__container {
         color: var(--white);
         text-align: center;
@@ -467,23 +475,30 @@
           grid-template-columns: repeat(2, 1fr);
         }
       }
+
+
+
     </style>
     <title>EcoFurniture | Products</title>
-  </head>
-  <body>
-    <div class="section__container logo__header">
-      <img src="../static/assets/logo.webp" alt="icon" />
-      <div class="contact__us">
+</head>
+<body>
+<div class="section__container logo__header">
+    <img src="../static/assets/logo.webp" alt="icon"/>
+    <div class="contact__us">
         <p><i class="ri-mail-fill"></i> ecofurniture@gmail.com</p>
         <p><i class="ri-phone-fill"></i> +919876543210</p>
-      </div>
     </div>
-    <nav>
-      {% block navbar %} {% include 'includes/product_navbar.html' %} {% endblock %}
-    </nav>
+</div>
+<nav>
+    {% block navbar %} {% include 'includes/product_navbar.html' %} {% endblock %}
+</nav>
 
-    <section>
+<div class="title">
+    <h2>Bedroom</h2>
+</div>
+
+<section>
     {% block content %} {% include 'includes/furniture_listing.html' %} {% endblock %}
-    </section>
-  </body>
+</section>
+</body>
 </html>

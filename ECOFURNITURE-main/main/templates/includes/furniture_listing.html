@@ -3,7 +3,7 @@
     .furniture-grid {
         display: grid;
         padding: 25px;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 20px;
     }
     .furniture-item {
@@ -12,19 +12,71 @@
         border-radius: 5px;
     }
     .furniture-item h2 {
-        margin: 0;
+        margin-right: 0;
         font-size: 1.5em;
     }
     .furniture-item p {
         margin: 0;
     }
 
+    .dropdown-container {
+        display: flex;
+        justify-content: space-between;
+        padding-left: 25px;
+        width: 675px; /* Adjust as needed */
+    }
+
+    #typeFilter, #sortOrder, #sortCategory {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 200px;
+    }
+
+    #typeFilter:focus, #sortOrder:hover, #sortCategory:hover {
+        border-color: black;
+        outline: none;
+    }
+
+
+
+
 </style>
+
+<!--DO NOT PUT SPECIFIC HTML STUFF HERE-->
+<!--THIS IS ONLY TO PULL FROM DATABASE-->
+
+<div class="dropdown-container">
+    <form>
+        <select id="typeFilter">
+            <option value="">All</option>
+            <option value="Table/Desks">Table/Desks</option>
+            <option value="Chairs">Chairs</option>
+            <option value="Sofas">Sofas</option>
+            <option value="Bed Frames">Bed Frames</option>
+            <option value="Wardrobes">Wardrobes</option>
+            <option value="Shelves">Shelves</option>
+            <option value="Lights">Lights</option>
+        </select>
+    </form>
+    <select id="sortOrder">
+        <option value="desc">Sort Descending Price</option>
+        <option value="asc">Sort Ascending Price</option>
+    </select>
+    <select id="sortCategory">
+        <option value="">New & Upcycled</option>
+        <option value="New">Sort by New</option>
+        <option value="Upcycled">Sort by Upcycled</option>
+    </select>
+</div>
 
 <div class="furniture-grid">
     {% for furniture in furniture_list %}
     {% if furniture.get_furniture_category() != "Old" and furniture.get_furniture_status() == "For Sale" %}
-    <div class="furniture-item">
+    <div class="furniture-item" data-type="{{ furniture.get_furniture_type() }}"
+         data-price="{{ furniture.get_furniture_price() }}" data-category="{{ furniture.get_furniture_category() }}">
+        <h2>{{ furniture.get_furniture_name() }}</h2>
         {% if furniture.get_furniture_type() == "Table/Desks"%}
         <h2>Table/Desk</h2>
         {% elif furniture.get_furniture_type() == "Chairs"%}
@@ -37,6 +89,8 @@
         <h2>Wardrobe</h2>
         {% elif furniture.get_furniture_type() == "Shelves"%}
         <h2>Shelve</h2>
+        {% elif furniture.get_furniture_type() == "Lights"%}
+        <h2>Lights</h2>
         {% endif %}
         <p>Quantity: {{ furniture.get_furniture_quantity() }}</p>
         <p>Category:
@@ -52,3 +106,77 @@
     {% endfor %}
 </div>
 {% endblock %}
+
+
+
+<!--JAVASCRIPT STUFF FOR THE FILTERS-->
+<script>
+document.getElementById('typeFilter').addEventListener('change', function() {
+    var type = this.value;
+    var items = document.getElementsByClassName('furniture-item');
+    for (var i = 0; i < items.length; i++) {
+        if (type === '' || items[i].getAttribute('data-type') === type) {
+            items[i].style.display = '';
+        } else {
+            items[i].style.display = 'none';
+        }
+    }
+});
+
+function sortItems(ascending) {
+    var items = Array.from(document.getElementsByClassName('furniture-item'));
+    items.sort(function(a, b) {
+        var priceA = parseFloat(a.getAttribute('data-price'));
+        var priceB = parseFloat(b.getAttribute('data-price'));
+        return ascending ? priceA - priceB : priceB - priceA;
+    });
+    var grid = document.getElementsByClassName('furniture-grid')[0];
+    items.forEach(function(item) {
+        grid.appendChild(item);
+    });
+}
+
+document.getElementById('sortOrder').addEventListener('change', function() {
+    sortItems(this.value === 'asc');
+});
+
+function filterItemsByCategory(category) {
+    var items = document.getElementsByClassName('furniture-item');
+    for (var i = 0; i < items.length; i++) {
+        var itemCategory = items[i].getAttribute('data-category');
+        if (category === "" || itemCategory === category) {
+            items[i].style.display = "";
+        } else {
+            items[i].style.display = "none";
+        }
+    }
+}
+
+document.getElementById('sortCategory').addEventListener('change', function() {
+    filterItemsByCategory(this.value);
+});
+
+function filterItemsByCategoryAndType(category) {
+    var type = document.getElementById('typeFilter').value;
+    var items = document.getElementsByClassName('furniture-item');
+    for (var i = 0; i < items.length; i++) {
+        var itemCategory = items[i].getAttribute('data-category');
+        var itemType = items[i].getAttribute('data-type');
+        if ((category === "" || itemCategory === category) && (type === "" || itemType === type)) {
+            items[i].style.display = "";
+        } else {
+            items[i].style.display = "none";
+        }
+    }
+}
+
+document.getElementById('sortCategory').addEventListener('change', function() {
+    filterItemsByCategoryAndType(this.value);
+});
+
+document.getElementById('typeFilter').addEventListener('change', function() {
+    filterItemsByCategoryAndType(document.getElementById('sortCategory').value);
+});
+
+
+</script>

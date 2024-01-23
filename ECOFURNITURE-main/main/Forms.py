@@ -20,7 +20,8 @@ class CreateCustomerForm(Form):
     remarks = TextAreaField('Remarks', [validators.Optional()])
 
 class CreateFurnitureForm(Form):
-    furniture_type = RadioField('Furniture Type', [validators.DataRequired()], choices=[('Table/Desks', 'Table/Desks'), ('Chairs', 'Chairs'), ('Sofas', 'Sofas'), ('Bed Frames', 'Bed Frames'), ('Wardrobes', 'Wardrobes'), ('Shelves', 'Shelves')])
+    furniture_type = RadioField('Furniture Type', [validators.DataRequired()], choices=[('Table/Desks', 'Table/Desks'), ('Chairs', 'Chairs'), ('Sofas', 'Sofas'), ('Bed Frames', 'Bed Frames'), ('Wardrobes', 'Wardrobes'), ('Shelves', 'Shelves'), ('Lights', 'Lights')])
+    furniture_name = TextAreaField('Furniture Name', [validators.DataRequired()], render_kw={"placeholder": "Product Name"})
     furniture_quantity = IntegerField('Quantity', [validators.NumberRange(min=0, max=10000), validators.DataRequired()], widget=NumberInput())
     furniture_category = SelectField('Furniture Category', [validators.DataRequired()], choices=[('', 'Select'), ('New', 'New'), ('Upcycled', 'Upcycled'), ('Old', 'Old')])
     furniture_status = SelectField('Furniture Status', [validators.DataRequired()], choices=[('', 'Select'), ('For Sale', 'For Sale'), ('Not For Sale', 'Not For Sale')])
@@ -46,7 +47,7 @@ class Transportation_form(Form):
     type = RadioField('select the type of furniture to deliver', choices=[('T', 'tables & desk'), ('S', 'Sofa'), ('C', 'Chairs'), ('B', 'Bed frames'), ('W', 'Wardrobes'), ('S', 'Shelving Unites')], default='F')
     date = DateField("Date of delivery", format="%Y-%m-%d")
     Info = TextAreaField("Anything for us to take note of?")
-    
+
 class OrderForm(Form):
     customer_id = StringField('Customer ID required', [validators.Length(min=1, max=150), validators.DataRequired()])
     order_id = StringField('Order ID required', [validators.Length(min=1, max=150), validators.DataRequired()])

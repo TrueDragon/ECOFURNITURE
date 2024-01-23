@@ -216,6 +216,21 @@
       .form {
         text-align: center;
       }
+
+      button {
+        background-color: #b9bcbb; /* Green */
+        border: none;
+        color: rgb(27, 27, 27);
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        font-weight: bold;
+        font-family: sans-serif;
+      }
     </style>
   </head>
 <title>{% block title %}EcoFurniture | Products {% endblock %}</title>
@@ -252,30 +267,29 @@
     </nav>
     <br>
     <div class="form">
-    <h1 class="display-4">PAYMENT</h1>
-    <hr> <br>
-    <form method="POST" action="">
-      <div class="form-group">
-        {{ render_field(form.first_name, class="form-control") }}
-      </div>
-      <br>
-      <div class="form-group">
-        {{ render_field(form.last_name, class="form-control") }}
-      </div>
-      <br>
-      <div class="form-group">
-        {{ render_field(form.card_no, class="form-control") }}
-      </div>
-      <br>
-      <div class="form-group">
-        {{ render_field(form.exp, class="form-control") }}
-      </div>
-      <br>
-      <div class="form-group">
-        {{ render_field(form.cvv, class="form-control") }}
-      </div>
-      <input type="submit" value="Confirm" class="btn btn-primary"/>
-    </form>
+    <h1 class="display-4"> </h1>
+    <br>
+    <h1>
+        <img src="../static/assets/tick.png" style="width: 150px;">
+        <br>
+        THANK YOU FOR YOUR PURCHASE!
+    </h1>
+    <br>
+    <h2>
+        YOUR ORDER HAS BEEN COMPLETED SUCCESSFULLY
+    </h2>
+    <br>
+    <h4>
+        YOU SHOULD RECEIVE AN ORDER CONFIRMATION EMAIL SHORTLY
+    </h4>
+    <br>
+    <a href="/products">
+        <button>
+            RETURN TO HOME
+        </button>
+    </a>
+    <br><br><br><br><br><br><br><br><br>
+
     <footer>
       <div class="section__container footer__container">
         <div class="footer__col">

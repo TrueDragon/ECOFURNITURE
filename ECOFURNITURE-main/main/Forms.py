@@ -49,7 +49,6 @@ class Transportation_form(Form):
     
 class OrderForm(Form):
     customer_id = StringField('Customer ID required', [validators.Length(min=1, max=150), validators.DataRequired()])
-    order_id = StringField('Order ID required', [validators.Length(min=1, max=150), validators.DataRequired()])
     item_id = StringField('Item ID required', [validators.Length(min=1, max=150), validators.DataRequired()])
     item_quantity = StringField('Item quantity required', [validators.Length(min=1, max=150), validators.DataRequired()])
 

@@ -1,14 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm
+import os
 import shelve
-import User
+
+from flask import Flask, render_template, redirect, url_for, session
+from flask import request
+
 import Customer
 import Furniture
-import Pay
 import Order
+import Pay
 import Report
-import os
-from flask import request
+import User
+from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm
 
 app = Flask(__name__)
 # just some security
@@ -56,12 +58,6 @@ def default():
 def products():
     return render_template('products.html')
 
-
-@app.route('/living_room')
-def living_room():
-    return render_template('living_room.html')
-
-
 # testing !!!
 @app.route('/bedroom')
 def bedroom():
@@ -78,25 +74,55 @@ def bedroom():
     return render_template('bedroom.html', count=len(furniture_list), furniture_list=furniture_list)
 
 
-@app.route('/contact_us')
-def contact():
-    return render_template('contact_us.html')
+@app.route('/office')
+def office():
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        furniture_list.append(furniture)
+
+    return render_template('office.html', count=len(furniture_list), furniture_list=furniture_list)
+
+
+@app.route('/living_room')
+def living_room():
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        furniture_list.append(furniture)
+
+    return render_template('living_room.html', count=len(furniture_list), furniture_list=furniture_list)
 
 
 @app.route('/dining_room')
 def dining_room():
-    return render_template('dining_room.html')
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        furniture_list.append(furniture)
+
+    return render_template('dining_room.html', count=len(furniture_list), furniture_list=furniture_list)
 
 
-@app.route('/light')
-def light():
-    return render_template('light.html')
 
-
-@app.route('/office')
-def office():
-    return render_template('office.html')
-
+@app.route('/contact_us')
+def contact():
+    return render_template('contact_us.html')
 
 @app.route('/account')
 def account():
@@ -703,7 +729,7 @@ def login():
 
         # checks if the login info is for a customer
         if check_credentials(username, password):
-            # throws you back to the products page if the login is correct
+            # throws you back to the products page if the logxin is correct
             session['username'] = username
             return redirect(url_for('products'))
 

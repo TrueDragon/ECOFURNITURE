@@ -71,7 +71,7 @@
 
 <div class="furniture-grid">
     {% for furniture in furniture_list %}
-    {% if furniture.get_furniture_category() != "Old" and furniture.get_furniture_status() == "For Sale" %}
+    {% if furniture.get_furniture_category() != "Old" and furniture.get_furniture_status() != "Not For Sale" %}
     <div class="furniture-item" data-type="{{ furniture.get_furniture_type() }}"
          data-price="{{ furniture.get_furniture_price() }}" data-category="{{ furniture.get_furniture_category() }}">
         <h2>{{ furniture.get_furniture_name() }}</h2>

@@ -30,8 +30,8 @@ class CreateFurnitureForm(Form):
 class PaymentForm(Form):
     first_name = StringField('First name', [validators.Length(min=1, max=150), validators.DataRequired()])
     last_name = StringField('Last name', [validators.Length(min=1, max=150), validators.DataRequired()])
-    card_no = IntegerField('Card number', [validators.NumberRange(min=0, max=10000), validators.DataRequired()], widget=NumberInput())
-    exp = StringField('Expiration date DD/MM/YYYY', [validators.Length(min=1, max=150), validators.DataRequired()])
+    card_no = IntegerField('Card number', [validators.NumberRange(min=16, max=999999999999999999999999), validators.DataRequired()], widget=NumberInput())
+    exp = StringField('Expiration date', [validators.Length(min=4, max=5), validators.DataRequired()], render_kw={"placeholder": "MM/YY"})
     cvv = IntegerField('CVV', [validators.NumberRange(min=0, max=10000), validators.DataRequired()], widget=NumberInput())
 
 class ReportForm(Form):

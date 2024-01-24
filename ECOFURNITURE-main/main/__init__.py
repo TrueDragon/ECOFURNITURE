@@ -105,6 +105,9 @@ def home():
     admins = get_admins()
     return render_template('home.html', admins=admins)
 
+@app.route('/confirm')
+def confirm():
+    return render_template('confirm.html')
 
 @app.route('/createUser', methods=['GET', 'POST'])
 def create_user():
@@ -200,7 +203,7 @@ def payment():
 
         db.close()
 
-        return redirect(url_for('retrieve_payment'))
+        return redirect(url_for('confirm'))
     return render_template('createpayment.html', form=payment_form)
 
 

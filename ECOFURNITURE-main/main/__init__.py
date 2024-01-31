@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm, DiscountForm
+from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm
 import shelve
 import User
 import Customer
@@ -8,7 +8,6 @@ import Pay
 import Order
 import Report
 import os
-import Discount
 from flask import request
 
 
@@ -57,19 +56,11 @@ def products():
 
 # THIS IS FOR LINKING NAVBAR IN PRODUCT WEBSITE #
 
-@app.route('/cart')
-def index():
-    subtotal_value = 100
-    shipping_fee = 15
-    return render_template('cart.html', subtotal_value=subtotal_value, shipping_fee=shipping_fee)
 
 @app.route('/living_room')
 def living_room():
     return render_template('living_room.html')
 
-@app.route('/cart')
-def cart():
-    return render_template('cart.html')
 
 @app.route('/bedroom')
 def bedroom():
@@ -215,27 +206,6 @@ def payment():
         return redirect(url_for('confirm'))
     return render_template('createpayment.html', form=payment_form)
 
-@app.route('/createDiscount', methods=['GET', 'POST'])
-def create_discount():
-    discount_form = DiscountForm(request.form)
-    if request.method == 'POST' and discount_form.validate():
-        discount_dict = {}
-        db = shelve.open('discount.db', 'c')
-
-        try:
-            payment_dict = db['Info']
-        except:
-            print("Error in retrieving Users from discount.db.")
-
-        discount = Discount.Discount(discount_form.code.data, discount_form.amount.data)
-
-        discount_dict[discount.get_id()] = discount
-        db['Info'] = discount_dict
-
-        db.close()
-
-        return redirect(url_for('retrieve_discount'))
-    return render_template('createDiscount.html', form=discount_form)
 
 @app.route('/retrieveUsers')
 def retrieve_users():
@@ -295,20 +265,6 @@ def retrieve_payment():
         payment_list.append(payment)
 
     return render_template('retrievePayment.html', count=len(payment_list), payment_list=payment_list)
-
-@app.route('/retrieveDiscount')
-def retrieve_discount():
-    discount_dict = {}
-    db = shelve.open('discount.db', 'r')
-    discount_dict = db['Info']
-    db.close()
-
-    discount_list = []
-    for key in discount_dict.keys():
-        discount = discount_dict.get(key)
-        discount_list.append(discount)
-
-    return render_template('retrieveDiscount.html', count=len(discount_list), discount_list=discount_list)
 
 
 @app.route('/updateUser/<int:id>/', methods=['GET', 'POST'])
@@ -464,33 +420,6 @@ def update_payment(id):
         update_payment_form.cvv.data = payment.get_cvv()
         return render_template('updatePayment.html', form=update_payment_form)
 
-@app.route('/updateDiscount/<int:id>/', methods=['GET', 'POST'])
-def update_discount(id):
-    update_discount_form = DiscountForm(request.form)
-    if request.method == 'POST' and update_discount_form.validate():
-        discount_dict = {}
-        db = shelve.open('discount.db', 'w')
-        discount_dict = db['Info']
-
-        discount = discount_dict.get(id)
-        discount.set_code(update_discount_form.code.data)
-        discount.set_amount(update_discount_form.amount.data)
-
-        db['Info'] = discount_dict
-        db.close()
-
-        return redirect(url_for('retrieve_discount'))
-
-    else:
-        discount_dict = {}
-        db = shelve.open('discount.db', 'r')
-        discount_dict = db['Info']
-        db.close()
-
-        discount = discount_dict.get(id)
-        update_discount_form.code.data = discount.get_code()
-        update_discount_form.amount.data = discount.get_amount()
-        return render_template('updateDiscount.html', form=update_discount_form)
 
 @app.route('/deleteUser/<int:id>', methods=['POST'])
 def delete_user(id):
@@ -545,19 +474,6 @@ def delete_payment(id):
     db.close()
 
     return redirect(url_for('retrieve_payment'))
-
-@app.route('/deleteDiscount/<int:id>', methods=['POST'])
-def delete_discount(id):
-    discount_dict = {}
-    db = shelve.open('discount.db', 'w')
-    discount_dict = db['Info']
-
-    discount_dict.pop(id)
-
-    db['Info'] = discount_dict
-    db.close()
-
-    return redirect(url_for('retrieve_discount'))
 
 
 @app.route('/createOrder', methods=['GET', 'POST'])

@@ -34,10 +34,6 @@ class PaymentForm(Form):
     exp = StringField('Expiration date', [validators.Length(min=4, max=5), validators.DataRequired()], render_kw={"placeholder": "MM/YY"})
     cvv = IntegerField('CVV', [validators.NumberRange(min=0, max=10000), validators.DataRequired()], widget=NumberInput())
 
-class DiscountForm(Form):
-    code = StringField('Discount code', [validators.Length(min=1, max=150), validators.DataRequired()])
-    amount = IntegerField('Discount amount', [validators.NumberRange(min=1, max=150), validators.DataRequired()])
-
 class ReportForm(Form):
     email = StringField('email address registered', [validators.Length(min=1, max=150), validators.DataRequired()])
     issue = RadioField('select one issue from the options below', choices=[('B', 'Bug reporting'), ('I', 'Issue with payment method'), ('A', 'Account details'), ('G', 'General feedback')], default='F')

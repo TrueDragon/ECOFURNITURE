@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary-color: #f59e1d;
+        --primary-color-dark: #fbbf24;
+        --secondary-color: #2a80b3;
+        --text-dark: #333333;
+        --text-light: #f5f5f5;
+        --white: #ffffff;
+        --max-width: 1200px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      .section__container {
+        max-width: var(--max-width);
+        margin: auto;
+        padding: 5rem 1rem;
+      }
+
+      .section__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-bottom: 4rem;
+      }
+
+      .section__title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      img {
+        width: 100%;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+
+      .logo__header {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .logo__header img {
+        max-width: 150px;
+      }
+
+      .contact__us {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .contact__us p {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.8rem;
+        color: var(--text-dark);
+        cursor: pointer;
+      }
+
+      .contact__us i {
+        font-size: 1rem;
+      }
+
+      nav {
+        background-color: var(--primary-color);
+      }
+
+      .nav__links {
+        padding: 0.5rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .nav__links a {
+        font-size: 0.9rem;
+        color: var(--white);
+        transition: 0.3s;
+      }
+
+      .nav__links a:hover {
+        color: var(--secondary-color);
+      }
+
+      .nav__links i {
+        font-size: 1.2rem;
+      }
+
+      header {
+        min-height: 30rem;
+        background-image: url("assets/header-bg.jpg");
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+
+      .header__container {
+        height: 30rem;
+        flex-direction: column;
+        align-items: flex-end; /* Change this */
+        justify-content: flex-start; /* Change this */
+        color: var(--text-dark);
+        text-align: left;
+      }
+
+
+      .header__container h1 {
+        font-size: 4rem;
+      }
+
+      .header__container button {
+        margin-top: 1rem;
+        padding: 1rem 2rem;
+        outline: none;
+        border: none;
+        border-radius: 5px;
+        color: var(--white);
+        background-color: var(--primary-color);
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .header__container button:hover {
+        background-color: var(--primary-color-dark);
+      }
+
+      footer {
+        background-color: var(--text-light);
+      }
+
+      .footer__container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5rem;
+        color: var(--text-dark);
+      }
+
+      .footer__col img {
+        max-width: 150px;
+        margin-bottom: 2rem;
+      }
+
+      .footer__col i {
+        font-size: 1rem;
+        margin-right: 1rem;
+      }
+
+      .footer__col h4 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+      }
+
+      .footer__col p {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+
+      .footer__col p:hover {
+        color: var(--primary-color);
+      }
+
+      .footer__bar {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+        text-align: center;
+        color: var(--white);
+        background-color: var(--primary-color);
+      }
+
+        .footer__container {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+      .form-container {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .form-left {
+        flex: 2.5; /* Take up available space */
+        text-align: left;
+      }
+
+      .form-right {
+        flex: 1; /* Take up available space */
+        text-align: left;
+      }
+
+    </style>
+  </head>
+<title>{% block title %}EcoFurniture | Products {% endblock %}</title>
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+
+<body>
+    <div class="section__container logo__header">
+      <img src="../static/assets/logo.webp" alt="icon" />
+      <div class="contact__us">
+        <p><i class="ri-mail-fill"></i> ecofurniture@gmail.com</p>
+        <p><i class="ri-phone-fill"></i> +919876543210</p>
+      </div>
+    </div>
+    <nav>
+      {% block navbar %}
+      <div class="section__container nav__links">
+        <span><a href="/products">HOME</a></span>
+        <span><a href="/living_room">LIVING ROOM</a></span>
+        <span><a href="/dining_room">DINING ROOM</a></span>
+        <span><a href="/office">OFFICE</a></span>
+        <span><a href="/bedroom">BEDROOM</a></span>
+        <span><a href="/light">LIGHT</a></span>
+        <span><a href="/contact_us">CONTACT US</a></span>
+        <span><a href="/login">LOGIN</a></span>
+        <span>
+          <a href="#">
+            <i class="ri-shopping-cart-2-line"></i>
+          </a>
+        </span>
+      </div>
+      {% endblock %}
+    </nav>
+    <br>
+    <div class="form">
+    <h1 class="display-4"> </h1>
+    <br>
+        <div class="form-container">
+      <div class="form-left">
+        <!-- Content for div 1 -->
+        cart stuff
+      </div>
+      <div class="form-right">
+        <!-- Content for div 2 -->
+        <h1>Order summary</h1>
+        <h2>Subtotal: {{ subtotal_value }} </h2>
+        <h2>Shipping Fee: {{ shipping_fee }} </h2>
+        <h2>Discount: </h2>
+        <h2>Total: {{ subtotal_value + shipping_fee }} </h2>
+          <a href="/createpayment">
+             <button>
+            CHECKOUT
+             </button>
+          </a>
+      </div>
+    </div>
+    <br>
+    <br><br><br><br><br><br><br><br><br>
+
+    <footer>
+      <div class="section__container footer__container">
+        <div class="footer__col">
+          <img src="../static/assets/logo.webp" alt="logo" />
+          <p>
+            Find a wide range of high-quality furniture pieces that will elevate
+            the style and functionality of your home.
+          </p>
+          <p><i class="ri-phone-fill"></i> +919876543210</p>
+          <p>
+            <i class="ri-map-pin-2-fill"></i>
+            10 Buangkok View Singapore 539747
+          </p>
+        </div>
+        <div class="footer__col">
+          <h4>INFORMATION</h4>
+          <p>Site Map</p>
+          <p>Search Terms</p>
+          <p>Advance Search</p>
+          <p>Privacy Policy</p>
+          <p>Suppliers</p>
+          <p>Our Stores</p>
+        </div>
+        <div class="footer__col">
+          <h4>MY ACCOUNT</h4>
+          <p>Login</p>
+          <p>About Us</p>
+          <p>Wishlist</p>
+          <p>Checkout</p>
+          <p>FAQs</p>
+          <p>Contact Us</p>
+        </div>
+      </div>
+      <div class="footer__bar">
+        Copyright &#169; 2023 EcoFurniture. All rights reserved.
+      </div>
+    </footer>
+</body>
+{% endblock %}
+</html>

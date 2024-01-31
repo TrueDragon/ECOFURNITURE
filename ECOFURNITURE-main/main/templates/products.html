@@ -132,14 +132,22 @@
         background-repeat: no-repeat;
       }
 
+      #limited {
+        width: 544px;
+        float: right;
+        padding-top: 49px;
+        margin-right: 291px;
+      }
+
       .header__container {
         height: 30rem;
-        display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
+        align-items: flex-end; /* Change this */
+        justify-content: flex-start; /* Change this */
         color: var(--text-dark);
+        text-align: left;
       }
+
 
       .header__container h1 {
         font-size: 4rem;
@@ -479,19 +487,31 @@
       </div>
     </div>
     <nav>
-      {% block navbar %} {% include 'includes/product_navbar.html' %} {% endblock %}
+      {% block navbar %}
+      <div class="section__container nav__links">
+        <span><a href="/products">HOME</a></span>
+        <span><a href="/living_room">LIVING ROOM</a></span>
+        <span><a href="/dining_room">DINING ROOM</a></span>
+        <span><a href="/office">OFFICE</a></span>
+        <span><a href="/bedroom">BEDROOM</a></span>
+        <span><a href="/light">LIGHT</a></span>
+        <span><a href="/contact_us">CONTACT US</a></span>
+        <span><a href="/login">LOGIN</a></span>
+        <span>
+          <a href="#">
+            <i class="ri-shopping-cart-2-line"></i>
+          </a>
+        </span>
+      </div>
+      {% endblock %}
     </nav>
     <header>
+      <img id="limited" src="../static/assets/limited.webp" />
       {% block content %}
-      <div class="section__container header__container">
+      <div class="section__container header__container limited_container">
         <p>Limited Edition</p>
         <h1>REFURBISHED</h1>
         <h1>FURNITURE</h1>
-        <!--
-        <div class="limited">
-          <img src="../static/assets/limited.webp" />
-        </div>
-        -->
         <button class="btn">SHOP NOW!</button>
       </div>
     </header>
@@ -716,7 +736,7 @@
           <p><i class="ri-phone-fill"></i> +919876543210</p>
           <p>
             <i class="ri-map-pin-2-fill"></i>
-            10 Buangkok View Singapore 539747
+            10 N View Singapore 539747
           </p>
         </div>
         <div class="footer__col">

@@ -1,29 +1,25 @@
-import os
+from flask import Flask, render_template, request, redirect, url_for, session
+from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm
 import shelve
-
-from flask import Flask, render_template, redirect, url_for, session
-from flask import request
-
+import User
 import Customer
 import Furniture
-import Order
 import Pay
+import Order
 import Report
-import User
-from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm
+import os
+from flask import request
+
 
 app = Flask(__name__)
 # just some security
 app.secret_key = os.urandom(24)
-
-
 # this makes sure files exist
 
 @app.route('/signout')
 def signout():
     session.pop('username', None)
     return redirect(url_for('products'))
-
 
 @app.route('/signoutadmin')
 def signoutadmin():
@@ -54,105 +50,21 @@ def default():
     return render_template('products.html')
 
 
-@app.route('/furniture_listing')
-def furniture_listings():
-    query = request.args.get('query', '')
-    furniture_list = Furniture.query.filter(Furniture.furniture_name.ilike(f'%{query}%')).all()
-    return render_template('furniture_listings.html', furniture_list=furniture_list)
-
-
 @app.route('/products')
 def products():
     return render_template('products.html')
 
-
-# testing !!!
-@app.route('/bedroom')
-def bedroom():
-    query = request.args.get('query', '')
-    reset = request.args.get('reset')
-
-    if reset:
-        query = ''
-
-    furniture_dict = {}
-    db = shelve.open('furniture.db', 'r')
-    furniture_dict = db['Furniture']
-    db.close()
-
-    furniture_list = []
-    for key in furniture_dict.keys():
-        furniture = furniture_dict.get(key)
-        if query.lower() in furniture.get_furniture_name().lower():
-            furniture_list.append(furniture)
-
-    return render_template('bedroom.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
-
-
-@app.route('/office')
-def office():
-    query = request.args.get('query', '')
-    reset = request.args.get('reset')
-
-    if reset:
-        query = ''
-
-    furniture_dict = {}
-    db = shelve.open('furniture.db', 'r')
-    furniture_dict = db['Furniture']
-    db.close()
-
-    furniture_list = []
-    for key in furniture_dict.keys():
-        furniture = furniture_dict.get(key)
-        if query.lower() in furniture.get_furniture_name().lower():
-            furniture_list.append(furniture)
-
-    return render_template('office.html', count=len(furniture_list), furniture_list=furniture_list)
+# THIS IS FOR LINKING NAVBAR IN PRODUCT WEBSITE #
 
 
 @app.route('/living_room')
 def living_room():
-    query = request.args.get('query', '')
-    reset = request.args.get('reset')
-
-    if reset:
-        query = ''
-
-    furniture_dict = {}
-    db = shelve.open('furniture.db', 'r')
-    furniture_dict = db['Furniture']
-    db.close()
-
-    furniture_list = []
-    for key in furniture_dict.keys():
-        furniture = furniture_dict.get(key)
-        if query.lower() in furniture.get_furniture_name().lower():
-            furniture_list.append(furniture)
-
-    return render_template('living_room.html', count=len(furniture_list), furniture_list=furniture_list)
+    return render_template('living_room.html')
 
 
-@app.route('/dining_room')
-def dining_room():
-    query = request.args.get('query', '')
-    reset = request.args.get('reset')
-
-    if reset:
-        query = ''
-
-    furniture_dict = {}
-    db = shelve.open('furniture.db', 'r')
-    furniture_dict = db['Furniture']
-    db.close()
-
-    furniture_list = []
-    for key in furniture_dict.keys():
-        furniture = furniture_dict.get(key)
-        if query.lower() in furniture.get_furniture_name().lower():
-            furniture_list.append(furniture)
-
-    return render_template('dining_room.html', count=len(furniture_list), furniture_list=furniture_list)
+@app.route('/bedroom')
+def bedroom():
+    return render_template('bedroom.html')
 
 
 @app.route('/contact_us')
@@ -160,10 +72,24 @@ def contact():
     return render_template('contact_us.html')
 
 
+@app.route('/dining_room')
+def dining_room():
+    return render_template('dining_room.html')
+
+
+@app.route('/light')
+def light():
+    return render_template('light.html')
+
+
+@app.route('/office')
+def office():
+    return render_template('office.html')
+
+
 @app.route('/account')
 def account():
     return render_template('account.html')
-
 
 # END OF LINKING NAVBAR #
 
@@ -220,7 +146,7 @@ def create_customer():
                                      create_customer_form.gender.data, create_customer_form.membership.data,
                                      create_customer_form.remarks.data, create_customer_form.email.data,
                                      create_customer_form.date_joined.data, create_customer_form.address.data)
-        # customers_dict[customer.get_customer_id()] = customer
+# customers_dict[customer.get_customer_id()] = customer
         customers_dict[customer.get_user_id()] = customer
         db['Customers'] = customers_dict
 
@@ -242,13 +168,9 @@ def create_furniture():
         except:
             print("Error in retrieving Users from user.db.")
 
-        furniture = Furniture.Furniture(create_furniture_form.furniture_type.data,
-                                        create_furniture_form.furniture_name.data,
-                                        create_furniture_form.furniture_quantity.data,
-                                        create_furniture_form.furniture_category.data,
-                                        create_furniture_form.furniture_status.data,
-                                        create_furniture_form.furniture_price.data,
-                                        create_furniture_form.furniture_remarks.data)
+        furniture = Furniture.Furniture(create_furniture_form.furniture_type.data, create_furniture_form.furniture_quantity.data,
+                                        create_furniture_form.furniture_category.data, create_furniture_form.furniture_status.data,
+                                        create_furniture_form.furniture_price.data, create_furniture_form.furniture_remarks.data)
         furniture_dict[furniture.get_furniture_id()] = furniture
         db['Furniture'] = furniture_dict
 
@@ -428,7 +350,6 @@ def update_furniture(id):
 
         furniture = furniture_dict.get(id)
         furniture.set_furniture_type(update_furniture_form.furniture_type.data)
-        furniture.set_furniture_name(update_furniture_form.furniture_name.data)
         furniture.set_furniture_quantity(
             update_furniture_form.furniture_quantity.data)
         furniture.set_furniture_category(
@@ -453,7 +374,6 @@ def update_furniture(id):
 
         furniture = furniture_dict.get(id)
         update_furniture_form.furniture_type.data = furniture.get_furniture_type()
-        update_furniture_form.furniture_name.data = furniture.get_furniture_name()
         update_furniture_form.furniture_quantity.data = furniture.get_furniture_quantity()
         update_furniture_form.furniture_category.data = furniture.get_furniture_category()
         update_furniture_form.furniture_status.data = furniture.get_furniture_status()
@@ -747,7 +667,6 @@ def login():
     return render_template('createCustomer.html', form=create_customer_form)
 '''
 
-
 # hehe screw using a database
 
 # from here is humons code please refactor as you see fit
@@ -765,7 +684,7 @@ def login():
 
         # checks if the login info is for a customer
         if check_credentials(username, password):
-            # throws you back to the products page if the logxin is correct
+            # throws you back to the products page if the login is correct
             session['username'] = username
             return redirect(url_for('products'))
 
@@ -799,7 +718,7 @@ def is_admin(username, password):
         for line in file:
             parts = line.strip().split(", ")
             if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                1].strip():
+                    1].strip():
                 return True
     return False
 
@@ -809,8 +728,6 @@ def read_credentials_file(filename):
     existence(filename)
     with open(filename, "r") as file:
         return file.readlines()
-
-
 # this one writes both user and admin you should refactor this if you do not want it
 
 
@@ -820,8 +737,6 @@ def write_credentials(filename, username, password, is_admin=False):
             file.write(f"Username: {username}, Password: {password}\n")
         else:
             file.write(f"Username: {username}, Password: {password}\n")
-
-
 # this deletes from the logins file a bit messy but who cares
 
 
@@ -867,7 +782,7 @@ def is_valid_credentials(username, password):
         for line in login_file:
             parts = line.strip().split(", ")
             if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                1].strip():
+                    1].strip():
                 return True
 
     # and this one checks if its an admin login
@@ -875,11 +790,10 @@ def is_valid_credentials(username, password):
         for line in admin_file:
             parts = line.strip().split(", ")
             if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                1].strip():
+                    1].strip():
                 return True
 
     return False
-
 
 '''
 # this is for the login stuff
@@ -904,7 +818,6 @@ def login():
 
     return render_template('login.html', error=error)
 '''
-
 
 # wow its useless!
 
@@ -1011,8 +924,6 @@ def is_username_taken(username):
     return any(
         len(parts) > 0 and len(parts[0].split(":")) > 1 and username == parts[0].split(":")[1].strip() for line in
         existing_usernames for parts in [line.strip().split(", ")])
-
-
 # this just shows the admin logins/credentials
 
 
@@ -1043,8 +954,6 @@ def create_missing_files():
 
 # this function is here to create files if they are missing call it an integrity check if you want
 create_missing_files()
-
-
 # i know the code sucks
 
 
@@ -1115,14 +1024,11 @@ def admin_delete():
 if __name__ == '__main__':
     app.run(debug=True)
 
-
 # duplicate checker
 
 
 def is_duplicate_username(username, admins):
     return username in admins
-
-
 # edits the file
 @app.route('/logout')
 def logout():
@@ -1130,7 +1036,6 @@ def logout():
     session.clear()
     # Redirect to the home page or any other desired page after logout
     return redirect(url_for('products'))
-
 
 @app.route('/admin/edit', methods=['POST'])
 def admin_edit():
@@ -1149,6 +1054,8 @@ def admin_edit():
             write_admins_to_file(admins)
 
     return redirect(url_for('admin', error=error))
+
+# signs you out
 
 
 @app.route('/signout')

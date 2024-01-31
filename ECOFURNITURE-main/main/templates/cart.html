@@ -213,34 +213,20 @@
           grid-template-columns: repeat(2, 1fr);
         }
 
-      .form {
-        text-align: center;
+      .form-container {
+        display: flex;
+        justify-content: space-between;
       }
 
-      .form-group2 {
-        padding-right: 120px;
+      .form-left {
+        flex: 2.5; /* Take up available space */
+        text-align: left;
       }
 
-      .form-group2 input {
-        width: 63px;
+      .form-right {
+        flex: 1; /* Take up available space */
+        text-align: left;
       }
-
-      .button {
-        background-color: #f59e1d;
-        border: none;
-        color: rgb(255 255 255);
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        font-weight: regular;
-        font-family: sans-serif;
-        margin-bottom: 50px;
-      }
-
 
     </style>
   </head>
@@ -278,31 +264,30 @@
     </nav>
     <br>
     <div class="form">
-    <h1 class="display-4">PAYMENT</h1>
-    <br> <hr> <br> <br>
-    <form method="POST" action="">
-      <div class="form-group">
-        {{ render_field(form.first_name, class="form-control") }}
+    <h1 class="display-4"> </h1>
+    <br>
+        <div class="form-container">
+      <div class="form-left">
+        <!-- Content for div 1 -->
+        cart stuff
       </div>
-      <br>
-      <div class="form-group">
-        {{ render_field(form.last_name, class="form-control") }}
+      <div class="form-right">
+        <!-- Content for div 2 -->
+        <h1>Order summary</h1>
+        <h2>Subtotal: {{ subtotal_value }} </h2>
+        <h2>Shipping Fee: {{ shipping_fee }} </h2>
+        <h2>Discount: </h2>
+        <h2>Total: {{ subtotal_value + shipping_fee }} </h2>
+          <a href="/createpayment">
+             <button>
+            CHECKOUT
+             </button>
+          </a>
       </div>
-      <br>
-      <div class="form-group">
-        {{ render_field(form.card_no, class="form-control") }}
-      </div>
-      <br>
-      <div class="form-group2">
-        {{ render_field(form.exp, class="form-control") }}
-      </div>
-      <br>
-      <div class="form-group">
-        {{ render_field(form.cvv, class="form-control") }}
-      </div>
-      <br>
-      <input type="submit" value="Confirm" class="button"/>
-    </form>
+    </div>
+    <br>
+    <br><br><br><br><br><br><br><br><br>
+
     <footer>
       <div class="section__container footer__container">
         <div class="footer__col">

@@ -1,7 +1,10 @@
-class Order():
-    def __init__(self, customer_id, order_id, item_id, item_quantity):
+class Order:
+    order_count = 0
+
+    def __init__(self, customer_id, item_id, item_quantity):
+        Order.order_count += 1
         self.__customer_id = customer_id
-        self.__order_id = order_id
+        self.__order_id = Order.order_count
         self.__item_id = item_id
         self.__item_quantity = item_quantity
 
@@ -13,9 +16,6 @@ class Order():
 
     def get_order_id(self):
         return self.__order_id
-
-    def set_order_id(self, order_id):
-        self.__order_id = order_id
 
     def get_item_id(self):
         return self.__item_id

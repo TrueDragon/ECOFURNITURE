@@ -45,8 +45,8 @@
     }
 
     .search-bar input[type="submit"] {
-        margin-left: 10px; /* Space between the input and the buttons */
-        padding: 10px 20px; /* Larger horizontal padding for a wider button */
+        margin-left: 10px;
+        padding: 10px 20px;
         border: none;
         background-color: #f59e1d;
         color: white;
@@ -77,6 +77,7 @@
 
 <!--DO NOT PUT SPECIFIC HTML STUFF HERE-->
 <!--THIS IS ONLY TO PULL FROM DATABASE-->
+
 <div class="search-bar">
     <form method="get">
         <input type="text" name="query" placeholder="Furniture Name">
@@ -112,6 +113,7 @@
 <div class="furniture-grid">
     {% for furniture in furniture_list %}
     {% if furniture.get_furniture_category() != "Old" and furniture.get_furniture_status() != "Not For Sale" %}
+
     <div class="furniture-item" data-type="{{ furniture.get_furniture_type() }}"
          data-price="{{ furniture.get_furniture_price() }}" data-category="{{ furniture.get_furniture_category() }}">
         <h2>{{ furniture.get_furniture_name() }}</h2>

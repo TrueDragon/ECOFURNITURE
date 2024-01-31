@@ -67,10 +67,6 @@ def index():
 def living_room():
     return render_template('living_room.html')
 
-@app.route('/cart')
-def cart():
-    return render_template('cart.html')
-
 @app.route('/bedroom')
 def bedroom():
     return render_template('bedroom.html')

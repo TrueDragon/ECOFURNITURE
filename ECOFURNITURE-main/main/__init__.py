@@ -64,6 +64,12 @@ def products():
 
 @app.route('/living_room')
 def living_room():
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
     furniture_dict = {}
     db = shelve.open('furniture.db', 'r')
     furniture_dict = db['Furniture']
@@ -72,13 +78,20 @@ def living_room():
     furniture_list = []
     for key in furniture_dict.keys():
         furniture = furniture_dict.get(key)
-        furniture_list.append(furniture)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
 
-    return render_template('living_room.html', count=len(furniture_list), furniture_list=furniture_list)
+    return render_template('living_room.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 
 @app.route('/bedroom')
 def bedroom():
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
     furniture_dict = {}
     db = shelve.open('furniture.db', 'r')
     furniture_dict = db['Furniture']
@@ -87,9 +100,10 @@ def bedroom():
     furniture_list = []
     for key in furniture_dict.keys():
         furniture = furniture_dict.get(key)
-        furniture_list.append(furniture)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
 
-    return render_template('bedroom.html', count=len(furniture_list), furniture_list=furniture_list)
+    return render_template('bedroom.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 
 @app.route('/contact_us')
@@ -112,23 +126,14 @@ def dining_room():
     return render_template('dining_room.html', count=len(furniture_list), furniture_list=furniture_list)
 
 
-@app.route('/light')
-def light():
-    furniture_dict = {}
-    db = shelve.open('furniture.db', 'r')
-    furniture_dict = db['Furniture']
-    db.close()
-
-    furniture_list = []
-    for key in furniture_dict.keys():
-        furniture = furniture_dict.get(key)
-        furniture_list.append(furniture)
-
-    return render_template('light.html', count=len(furniture_list), furniture_list=furniture_list)
-
-
 @app.route('/office')
 def office():
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
     furniture_dict = {}
     db = shelve.open('furniture.db', 'r')
     furniture_dict = db['Furniture']
@@ -137,9 +142,10 @@ def office():
     furniture_list = []
     for key in furniture_dict.keys():
         furniture = furniture_dict.get(key)
-        furniture_list.append(furniture)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
 
-    return render_template('office.html', count=len(furniture_list), furniture_list=furniture_list)
+    return render_template('office.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 
 @app.route('/account')

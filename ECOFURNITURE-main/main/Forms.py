@@ -26,7 +26,7 @@ class CreateFurnitureForm(Form):
     furniture_category = SelectField('Furniture Category', [validators.DataRequired()], choices=[('', 'Select'), ('New', 'New'), ('Upcycled', 'Upcycled'), ('Old', 'Old')])
     furniture_status = SelectField('Furniture Status', [validators.DataRequired()], choices=[('', 'Select'), ('For Sale', 'For Sale'), ('Not For Sale', 'Not For Sale')])
     furniture_price = DecimalField('Unit Price ($)',[validators.NumberRange(min=0, max=10000), validators.DataRequired()])
-    furniture_remarks= TextAreaField('Remarks', [validators.Optional()], render_kw={"placeholder": "Type remarks here"})
+    furniture_remarks = TextAreaField('Remarks', [validators.Optional()], render_kw={"placeholder": "Type remarks here"})
 
 class PaymentForm(Form):
     first_name = StringField('First name', [validators.Length(min=1, max=150), validators.DataRequired()])

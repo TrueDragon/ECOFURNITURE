@@ -12,9 +12,9 @@ from flask import request
 
 
 app = Flask(__name__)
-# just some security
+
 app.secret_key = os.urandom(24)
-# this makes sure files exist
+
 
 @app.route('/signout')
 def signout():
@@ -168,9 +168,13 @@ def create_furniture():
         except:
             print("Error in retrieving Users from user.db.")
 
-        furniture = Furniture.Furniture(create_furniture_form.furniture_type.data, create_furniture_form.furniture_quantity.data,
-                                        create_furniture_form.furniture_category.data, create_furniture_form.furniture_status.data,
-                                        create_furniture_form.furniture_price.data, create_furniture_form.furniture_remarks.data)
+        furniture = Furniture.Furniture(create_furniture_form.furniture_type.data,
+                                        create_furniture_form.furniture_name.data,
+                                        create_furniture_form.furniture_quantity.data,
+                                        create_furniture_form.furniture_category.data,
+                                        create_furniture_form.furniture_status.data,
+                                        create_furniture_form.furniture_price.data,
+                                        create_furniture_form.furniture_remarks.data)
         furniture_dict[furniture.get_furniture_id()] = furniture
         db['Furniture'] = furniture_dict
 
@@ -641,39 +645,6 @@ def update_report(id):
         return render_template('updatereport.html', form=Update_Report_Form)
 
 
-'''
-def login():
-    create_customer_form = CreateCustomerForm(request.form)
-    if request.method == 'POST' and create_customer_form.validate():
-        customers_dict = {}
-        db = shelve.open('customer.db', 'c')
-
-        try:
-            customers_dict = db['Customers']
-        except:
-            print("Error in retrieving Customers from customer.db.")
-
-        customer = Customer.Customer(create_customer_form.first_name.data, create_customer_form.last_name.data,
-                                     create_customer_form.gender.data, create_customer_form.membership.data,
-                                     create_customer_form.remarks.data, create_customer_form.email.data,
-                                     create_customer_form.date_joined.data, create_customer_form.address.data)
-# customers_dict[customer.get_customer_id()] = customer
-        customers_dict[customer.get_user_id()] = customer
-        db['Customers'] = customers_dict
-
-        db.close()
-
-        return redirect(url_for('retrieve_customers'))
-    return render_template('createCustomer.html', form=create_customer_form)
-'''
-
-# hehe screw using a database
-
-# from here is humons code please refactor as you see fit
-
-# this one is an important function do not delete this make sure you refactor my code properly if you chan
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -699,6 +670,7 @@ def login():
             error = 'Incorrect username/password. Try again.'
 
     return render_template('login.html', error=error)
+
 
 
 def check_credentials(username, password):
@@ -795,31 +767,6 @@ def is_valid_credentials(username, password):
 
     return False
 
-'''
-# this is for the login stuff
-def login():
-    error = None
-
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        # This is extremely insecure, but why is it staying? it just is, don't ask me why because I don't remember
-        if is_valid_credentials(username, password):
-            # Checks if it's an admin login
-            if is_admin(username, password):
-                session['admin'] = admin
-                return redirect(url_for('home'))
-            else:
-                session['username'] = username
-                return redirect(url_for('home'))
-        else:
-            error = "Invalid username or password. Please try again."
-
-    return render_template('login.html', error=error)
-'''
-
-# wow its useless!
 
 @app.route('/view_admin_logins')
 def view_admin_logins():
@@ -834,7 +781,7 @@ def view_admin_logins():
     return render_template('view_admin_logins.html', admin_logins=admin_logins)
 
 
-# this just checks if a username taken (again)
+
 def is_customer_username_taken(username):
     filename = "customercredentials.txt"
     existence(filename)
@@ -875,7 +822,7 @@ def register():
             session['username'] = username
 
             # And redirection
-            return redirect(url_for('login'))
+            return redirect(url_for('products'))
 
     return render_template('register.html', error=error)
 

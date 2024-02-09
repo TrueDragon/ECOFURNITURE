@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm, DiscountForm
+from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages
+from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm, \
+    DiscountForm
 import shelve
 import User
 import Customer
@@ -9,18 +10,19 @@ import Order
 import Report
 import os
 import Discount
-from flask import request
-
 
 app = Flask(__name__)
 # just some security
 app.secret_key = os.urandom(24)
+
+
 # this makes sure files exist
 
 @app.route('/signout')
 def signout():
     session.pop('username', None)
     return redirect(url_for('products'))
+
 
 @app.route('/signoutadmin')
 def signoutadmin():
@@ -55,17 +57,50 @@ def default():
 def products():
     return render_template('products.html')
 
+
 # THIS IS FOR LINKING NAVBAR IN PRODUCT WEBSITE #
 
-@app.route('/cart')
-def index():
+def get_discount_codes():
+    with shelve.open('discount.db') as db:
+        return dict(db)
+
+# Function to check if a discount code is valid and return the discount amount
+def get_discount_amount(discount_code):
+    discount_codes = get_discount_codes()
+    return discount_codes.get(discount_code)
+
+# Route to handle the cart page
+@app.route('/cart', methods=['GET', 'POST'])
+def cart():
     subtotal_value = 100
     shipping_fee = 15
+    # Handle POST request when the form is submitted
+    if request.method == 'POST':
+        discount_code = request.form.get('discount_code').strip()  # Remove leading and trailing whitespaces
+
+        # Retrieve discount from database
+        db = shelve.open('discount.db', 'r')
+        discount_dict = db.get('Info', {})
+        db.close()
+
+        # Check if the discount code exists in the database (case-sensitive)
+        if any(discount.get_code() == discount_code for discount in discount_dict.values()):
+            for discount in discount_dict.values():
+                if discount.get_code() == discount_code:
+                    discount_amount = discount.get_amount()
+                    subtotal_value -= discount_amount  # Subtract discount amount from subtotal
+                    flash(f'Discount of ${discount_amount} applied successfully!')
+                    break
+        else:
+            flash('Invalid discount code. Please try again.')
     return render_template('cart.html', subtotal_value=subtotal_value, shipping_fee=shipping_fee)
+
+
 
 @app.route('/living_room')
 def living_room():
     return render_template('living_room.html')
+
 
 @app.route('/bedroom')
 def bedroom():
@@ -96,6 +131,7 @@ def office():
 def account():
     return render_template('account.html')
 
+
 # END OF LINKING NAVBAR #
 
 
@@ -110,9 +146,11 @@ def home():
     admins = get_admins()
     return render_template('home.html', admins=admins)
 
+
 @app.route('/confirm')
 def confirm():
     return render_template('confirm.html')
+
 
 @app.route('/createUser', methods=['GET', 'POST'])
 def create_user():
@@ -154,7 +192,7 @@ def create_customer():
                                      create_customer_form.gender.data, create_customer_form.membership.data,
                                      create_customer_form.remarks.data, create_customer_form.email.data,
                                      create_customer_form.date_joined.data, create_customer_form.address.data)
-# customers_dict[customer.get_customer_id()] = customer
+        # customers_dict[customer.get_customer_id()] = customer
         customers_dict[customer.get_user_id()] = customer
         db['Customers'] = customers_dict
 
@@ -176,9 +214,12 @@ def create_furniture():
         except:
             print("Error in retrieving Users from user.db.")
 
-        furniture = Furniture.Furniture(create_furniture_form.furniture_type.data, create_furniture_form.furniture_quantity.data,
-                                        create_furniture_form.furniture_category.data, create_furniture_form.furniture_status.data,
-                                        create_furniture_form.furniture_price.data, create_furniture_form.furniture_remarks.data)
+        furniture = Furniture.Furniture(create_furniture_form.furniture_type.data,
+                                        create_furniture_form.furniture_quantity.data,
+                                        create_furniture_form.furniture_category.data,
+                                        create_furniture_form.furniture_status.data,
+                                        create_furniture_form.furniture_price.data,
+                                        create_furniture_form.furniture_remarks.data)
         furniture_dict[furniture.get_furniture_id()] = furniture
         db['Furniture'] = furniture_dict
 
@@ -211,6 +252,7 @@ def payment():
         return redirect(url_for('confirm'))
     return render_template('createpayment.html', form=payment_form)
 
+
 @app.route('/createDiscount', methods=['GET', 'POST'])
 def create_discount():
     discount_form = DiscountForm(request.form)
@@ -219,7 +261,7 @@ def create_discount():
         db = shelve.open('discount.db', 'c')
 
         try:
-            payment_dict = db['Info']
+            discount_dict = db['Info']
         except:
             print("Error in retrieving Users from discount.db.")
 
@@ -232,6 +274,7 @@ def create_discount():
 
         return redirect(url_for('retrieve_discount'))
     return render_template('createDiscount.html', form=discount_form)
+
 
 @app.route('/retrieveUsers')
 def retrieve_users():
@@ -291,6 +334,7 @@ def retrieve_payment():
         payment_list.append(payment)
 
     return render_template('retrievePayment.html', count=len(payment_list), payment_list=payment_list)
+
 
 @app.route('/retrieveDiscount')
 def retrieve_discount():
@@ -460,6 +504,7 @@ def update_payment(id):
         update_payment_form.cvv.data = payment.get_cvv()
         return render_template('updatePayment.html', form=update_payment_form)
 
+
 @app.route('/updateDiscount/<int:id>/', methods=['GET', 'POST'])
 def update_discount(id):
     update_discount_form = DiscountForm(request.form)
@@ -487,6 +532,7 @@ def update_discount(id):
         update_discount_form.code.data = discount.get_code()
         update_discount_form.amount.data = discount.get_amount()
         return render_template('updateDiscount.html', form=update_discount_form)
+
 
 @app.route('/deleteUser/<int:id>', methods=['POST'])
 def delete_user(id):
@@ -541,6 +587,7 @@ def delete_payment(id):
     db.close()
 
     return redirect(url_for('retrieve_payment'))
+
 
 @app.route('/deleteDiscount/<int:id>', methods=['POST'])
 def delete_discount(id):
@@ -750,6 +797,7 @@ def login():
     return render_template('createCustomer.html', form=create_customer_form)
 '''
 
+
 # hehe screw using a database
 
 # from here is humons code please refactor as you see fit
@@ -801,7 +849,7 @@ def is_admin(username, password):
         for line in file:
             parts = line.strip().split(", ")
             if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                    1].strip():
+                1].strip():
                 return True
     return False
 
@@ -811,6 +859,8 @@ def read_credentials_file(filename):
     existence(filename)
     with open(filename, "r") as file:
         return file.readlines()
+
+
 # this one writes both user and admin you should refactor this if you do not want it
 
 
@@ -820,6 +870,8 @@ def write_credentials(filename, username, password, is_admin=False):
             file.write(f"Username: {username}, Password: {password}\n")
         else:
             file.write(f"Username: {username}, Password: {password}\n")
+
+
 # this deletes from the logins file a bit messy but who cares
 
 
@@ -865,7 +917,7 @@ def is_valid_credentials(username, password):
         for line in login_file:
             parts = line.strip().split(", ")
             if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                    1].strip():
+                1].strip():
                 return True
 
     # and this one checks if its an admin login
@@ -873,10 +925,11 @@ def is_valid_credentials(username, password):
         for line in admin_file:
             parts = line.strip().split(", ")
             if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                    1].strip():
+                1].strip():
                 return True
 
     return False
+
 
 '''
 # this is for the login stuff
@@ -901,6 +954,7 @@ def login():
 
     return render_template('login.html', error=error)
 '''
+
 
 # wow its useless!
 
@@ -1007,6 +1061,8 @@ def is_username_taken(username):
     return any(
         len(parts) > 0 and len(parts[0].split(":")) > 1 and username == parts[0].split(":")[1].strip() for line in
         existing_usernames for parts in [line.strip().split(", ")])
+
+
 # this just shows the admin logins/credentials
 
 
@@ -1037,6 +1093,8 @@ def create_missing_files():
 
 # this function is here to create files if they are missing call it an integrity check if you want
 create_missing_files()
+
+
 # i know the code sucks
 
 
@@ -1107,11 +1165,14 @@ def admin_delete():
 if __name__ == '__main__':
     app.run(debug=True)
 
+
 # duplicate checker
 
 
 def is_duplicate_username(username, admins):
     return username in admins
+
+
 # edits the file
 @app.route('/logout')
 def logout():
@@ -1119,6 +1180,7 @@ def logout():
     session.clear()
     # Redirect to the home page or any other desired page after logout
     return redirect(url_for('products'))
+
 
 @app.route('/admin/edit', methods=['POST'])
 def admin_edit():
@@ -1137,6 +1199,7 @@ def admin_edit():
             write_admins_to_file(admins)
 
     return redirect(url_for('admin', error=error))
+
 
 # signs you out
 

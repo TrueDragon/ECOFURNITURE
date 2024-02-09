@@ -298,7 +298,7 @@ def payment():
 
         db.close()
 
-        return redirect(url_for('retrieve_payment'))
+        return redirect(url_for('confirm'))
     return render_template('createpayment.html', form=payment_form)
 
 

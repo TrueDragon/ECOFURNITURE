@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages
 from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm, \
     DiscountForm
+import os
 import shelve
-import User
 import Customer
 import Furniture
-import Pay
 import Order
+import Pay
 import Report
 import os
 import Discount
+import User
 
 app = Flask(__name__)
 # just some security
@@ -60,15 +61,6 @@ def products():
 
 # THIS IS FOR LINKING NAVBAR IN PRODUCT WEBSITE #
 
-def get_discount_codes():
-    with shelve.open('discount.db') as db:
-        return dict(db)
-
-# Function to check if a discount code is valid and return the discount amount
-def get_discount_amount(discount_code):
-    discount_codes = get_discount_codes()
-    return discount_codes.get(discount_code)
-
 # Route to handle the cart page
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
@@ -99,12 +91,47 @@ def cart():
 
 @app.route('/living_room')
 def living_room():
-    return render_template('living_room.html')
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
+
+    return render_template('living_room.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
+
 
 
 @app.route('/bedroom')
 def bedroom():
-    return render_template('bedroom.html')
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
+
+    return render_template('bedroom.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 
 @app.route('/contact_us')
@@ -114,17 +141,39 @@ def contact():
 
 @app.route('/dining_room')
 def dining_room():
-    return render_template('dining_room.html')
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
 
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        furniture_list.append(furniture)
 
-@app.route('/light')
-def light():
-    return render_template('light.html')
+    return render_template('dining_room.html', count=len(furniture_list), furniture_list=furniture_list)
 
 
 @app.route('/office')
 def office():
-    return render_template('office.html')
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
+
+    return render_template('office.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 
 @app.route('/account')
@@ -145,7 +194,6 @@ def contact_us():
 def home():
     admins = get_admins()
     return render_template('home.html', admins=admins)
-
 
 @app.route('/confirm')
 def confirm():
@@ -215,6 +263,7 @@ def create_furniture():
             print("Error in retrieving Users from user.db.")
 
         furniture = Furniture.Furniture(create_furniture_form.furniture_type.data,
+                                        create_furniture_form.furniture_name.data,
                                         create_furniture_form.furniture_quantity.data,
                                         create_furniture_form.furniture_category.data,
                                         create_furniture_form.furniture_status.data,
@@ -249,7 +298,7 @@ def payment():
 
         db.close()
 
-        return redirect(url_for('confirm'))
+        return redirect(url_for('retrieve_payment'))
     return render_template('createpayment.html', form=payment_form)
 
 
@@ -274,6 +323,7 @@ def create_discount():
 
         return redirect(url_for('retrieve_discount'))
     return render_template('createDiscount.html', form=discount_form)
+
 
 
 @app.route('/retrieveUsers')
@@ -437,6 +487,7 @@ def update_furniture(id):
 
         furniture = furniture_dict.get(id)
         furniture.set_furniture_type(update_furniture_form.furniture_type.data)
+        furniture.set_furniture_name(update_furniture_form.furniture_name.data)
         furniture.set_furniture_quantity(
             update_furniture_form.furniture_quantity.data)
         furniture.set_furniture_category(
@@ -461,6 +512,7 @@ def update_furniture(id):
 
         furniture = furniture_dict.get(id)
         update_furniture_form.furniture_type.data = furniture.get_furniture_type()
+        update_furniture_form.furniture_name.data = furniture.get_furniture_name()
         update_furniture_form.furniture_quantity.data = furniture.get_furniture_quantity()
         update_furniture_form.furniture_category.data = furniture.get_furniture_category()
         update_furniture_form.furniture_status.data = furniture.get_furniture_status()

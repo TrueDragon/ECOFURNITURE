@@ -321,7 +321,7 @@ def create_discount():
 
         db.close()
 
-        return redirect(url_for('retrieve_discount'))
+        return redirect(url_for('confirm'))
     return render_template('createDiscount.html', form=discount_form)
 
 

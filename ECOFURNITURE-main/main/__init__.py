@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm
 import shelve
-import User
+from User import User
 import Customer
 import Furniture
 import Pay
@@ -10,11 +10,188 @@ import Report
 import os
 from flask import request
 
-
 app = Flask(__name__)
-
 app.secret_key = os.urandom(24)
 
+@app.route('/ikeacreation', methods=['GET', 'POST'])
+def ikeaCreation():
+    if request.method == 'POST':
+        with shelve.open('userbear.db', writeback=True) as db:
+            user_id = str(len(db) + 1)
+            db[user_id] = {
+                'username': request.form['username'],
+                'password': request.form['password'],
+                'user_type': request.form['user_type']
+            }
+        return render_template('login.html')
+
+    return render_template('ikeacreation.html')
+@app.route('/createUser')
+def createUser():
+    return render_template('ikeacreation.html')
+
+
+@app.route('/retrieveUsers', methods=['GET', 'POST'])
+def retrieve_users():
+    users_list = []
+    with shelve.open('userbear.db') as db:
+        users_list = list(db.items())
+    return render_template('retrieveUsers.html', users_list=users_list)
+
+@app.route('/delete_user/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    with shelve.open('userbear.db', writeback=True) as db:
+        if str(user_id) in db:
+            del db[str(user_id)]
+    return redirect(url_for('retrieve_users'))
+
+
+
+
+
+def initialize_admin_user():
+    with shelve.open('userbear.db', writeback=True) as db:
+        if any(user_info['username'] == 'admin' for user_info in db.values()):
+            print("Admin user already exists.")
+            return
+        user_id = str(max(map(int, db.keys()), default=0) + 1)
+        db[user_id] = {
+            'username': 'admin',
+            'password': 'admin',
+            'user_type': 'admin'
+        }
+initialize_admin_user()
+
+def register_user(username, password):
+    with shelve.open('userbear.db', writeback=True) as db:
+        if any(user_info['username'] == username for user_info in db.values()):
+            error = 'Username already taken. Please choose another one.'
+            return render_template('register.html', error=error)
+        user_id = str(max(map(int, db.keys()), default=0) + 1)
+        db[user_id] = {
+            'username': username,
+            'password': password,
+            'user_type': 'user'
+        }
+
+def authenticate_user(username, password):
+    with shelve.open('userbear.db') as db:
+        for user_info in db.values():
+            if user_info['username'] == username and user_info.get('password') == password:
+                return user_info
+    return None
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        with shelve.open('userbear.db') as db:
+            user_info = authenticate_user(username, password)
+            if user_info:
+
+                if user_info['user_type'] == 'admin':
+                    session['admin'] = True
+                    return redirect(url_for('home'))
+                else:
+                    session['username'] = username
+                    return redirect(url_for('products'))
+            else:
+                error = 'Invalid username or password'
+                return render_template('login.html', error=error)
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        register_result = register_user(username, password)
+
+        if isinstance(register_result, str):
+            return register_result
+
+        return redirect(url_for('login'))
+
+    return render_template('register.html', error=None)
+
+@app.route('/passchange', methods=['GET', 'POST'])
+def passchange():
+    if request.method == 'POST':
+        username = session.get('username')
+        if not username:
+            return redirect(url_for('login'))
+
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        with shelve.open('userbear.db', writeback=True) as db:
+            user_info = next((info for info in db.values() if info['username'] == username), None)
+            if user_info and user_info.get('password') == current_password:
+                if new_password == confirm_password:
+                    user_info['password'] = new_password
+                    session['username'] = username
+                    return redirect(url_for('products'))
+                else:
+                    error = 'New password and confirm password do not match'
+            else:
+                error = 'Incorrect current password'
+            return render_template('account.html', error=error)
+
+    return render_template('account.html')
+
+@app.route('/')
+def default():
+    return render_template('products.html')
+
+@app.route('/products')
+def products():
+    return render_template('products.html')
+
+@app.route('/living_room')
+def living_room():
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
+
+    return render_template('living_room.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
+
+
+@app.route('/bedroom')
+def bedroom():
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
+
+    return render_template('bedroom.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 @app.route('/signout')
 def signout():
@@ -26,108 +203,65 @@ def signoutadmin():
     session.pop('admin', None)
     return redirect(url_for('products'))
 
-
-def existence(filename):
-    if not os.path.exists(filename):
-        with open(filename, "w"):
-            pass  # Just create an empty file if it doesn't exist
-
-
-def get_admins():
-    admins = {}
-    with open('adminslogin.txt', 'r') as file:
-        for line in file:
-            if 'Username:' in line and 'Password:' in line:
-                parts = line.strip().split(', ')
-                username = parts[0].split(': ')[1]
-                password = parts[1].split(': ')[1]
-                admins[username] = password
-    return admins
-
-
-@app.route('/')
-def default():
-    return render_template('products.html')
-
-
-@app.route('/products')
-def products():
-    return render_template('products.html')
-
-# THIS IS FOR LINKING NAVBAR IN PRODUCT WEBSITE #
-
-
-@app.route('/living_room')
-def living_room():
-    return render_template('living_room.html')
-
-
-@app.route('/bedroom')
-def bedroom():
-    return render_template('bedroom.html')
-
-
 @app.route('/contact_us')
 def contact():
     return render_template('contact_us.html')
 
-
 @app.route('/dining_room')
 def dining_room():
-    return render_template('dining_room.html')
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
 
+    if reset:
+        query = ''
 
-@app.route('/light')
-def light():
-    return render_template('light.html')
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
+
+    return render_template('dining_room.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 
 @app.route('/office')
 def office():
-    return render_template('office.html')
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
+    furniture_dict = {}
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    furniture_list = []
+    for key in furniture_dict.keys():
+        furniture = furniture_dict.get(key)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
+
+    return render_template('office.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 
 @app.route('/account')
 def account():
     return render_template('account.html')
 
-# END OF LINKING NAVBAR #
-
-
 @app.route('/contactUs')
 def contact_us():
     return render_template('contactUs.html')
 
-
-# this is set to a temp admin page
 @app.route('/home')
 def home():
-    admins = get_admins()
-    return render_template('home.html', admins=admins)
-
-
-@app.route('/createUser', methods=['GET', 'POST'])
-def create_user():
-    create_user_form = CreateUserForm(request.form)
-    if request.method == 'POST' and create_user_form.validate():
-        users_dict = {}
-        db = shelve.open('user.db', 'c')
-
-        try:
-            users_dict = db['Users']
-        except:
-            print("Error in retrieving Users from user.db.")
-
-        user = User.User(create_user_form.first_name.data, create_user_form.last_name.data,
-                         create_user_form.gender.data, create_user_form.membership.data,
-                         create_user_form.remarks.data)
-        users_dict[user.get_user_id()] = user
-        db['Users'] = users_dict
-
-        db.close()
-
-        return redirect(url_for('retrieve_users'))
-    return render_template('createUser.html', form=create_user_form)
+    return render_template('home.html')
 
 
 @app.route('/createCustomer', methods=['GET', 'POST'])
@@ -141,20 +275,16 @@ def create_customer():
             customers_dict = db['Customers']
         except:
             print("Error in retrieving Customers from customer.db.")
-
         customer = Customer.Customer(create_customer_form.first_name.data, create_customer_form.last_name.data,
                                      create_customer_form.gender.data, create_customer_form.membership.data,
                                      create_customer_form.remarks.data, create_customer_form.email.data,
                                      create_customer_form.date_joined.data, create_customer_form.address.data)
-# customers_dict[customer.get_customer_id()] = customer
         customers_dict[customer.get_user_id()] = customer
         db['Customers'] = customers_dict
-
         db.close()
 
         return redirect(url_for('retrieve_customers'))
     return render_template('createCustomer.html', form=create_customer_form)
-
 
 @app.route('/createFurniture', methods=['GET', 'POST'])
 def create_furniture():
@@ -183,14 +313,12 @@ def create_furniture():
         return redirect(url_for('retrieve_furniture'))
     return render_template('createFurniture.html', form=create_furniture_form)
 
-
 @app.route('/createpayment', methods=['GET', 'POST'])
 def payment():
     payment_form = PaymentForm(request.form)
     if request.method == 'POST' and payment_form.validate():
         payment_dict = {}
         db = shelve.open('payment.db', 'c')
-
         try:
             payment_dict = db['Info']
         except:
@@ -208,21 +336,6 @@ def payment():
     return render_template('createpayment.html', form=payment_form)
 
 
-@app.route('/retrieveUsers')
-def retrieve_users():
-    users_dict = {}
-    db = shelve.open('user.db', 'r')
-    users_dict = db['Users']
-    db.close()
-
-    users_list = []
-    for key in users_dict:
-        user = users_dict.get(key)
-        users_list.append(user)
-
-    return render_template('retrieveUsers.html', count=len(users_list), users_list=users_list)
-
-
 @app.route('/retrieveCustomers')
 def retrieve_customers():
     customers_dict = {}
@@ -236,6 +349,7 @@ def retrieve_customers():
         customers_list.append(customer)
 
     return render_template('retrieveCustomers.html', count=len(customers_list), customers_list=customers_list)
+
 
 
 @app.route('/retrieveFurniture')
@@ -266,8 +380,7 @@ def retrieve_payment():
         payment_list.append(payment)
 
     return render_template('retrievePayment.html', count=len(payment_list), payment_list=payment_list)
-
-
+'''
 @app.route('/updateUser/<int:id>/', methods=['GET', 'POST'])
 def update_user(id):
     update_user_form = CreateUserForm(request.form)
@@ -301,8 +414,7 @@ def update_user(id):
         update_user_form.remarks.data = user.get_remarks()
 
         return render_template('updateUser.html', form=update_user_form)
-
-
+'''
 @app.route('/updateCustomer/<int:id>/', methods=['GET', 'POST'])
 def update_customer(id):
     update_customer_form = CreateCustomerForm(request.form)
@@ -343,7 +455,6 @@ def update_customer(id):
 
         return render_template('updateCustomer.html', form=update_customer_form)
 
-
 @app.route('/updateFurniture/<int:id>/', methods=['GET', 'POST'])
 def update_furniture(id):
     update_furniture_form = CreateFurnitureForm(request.form)
@@ -354,6 +465,7 @@ def update_furniture(id):
 
         furniture = furniture_dict.get(id)
         furniture.set_furniture_type(update_furniture_form.furniture_type.data)
+        furniture.set_furniture_name(update_furniture_form.furniture_name.data)
         furniture.set_furniture_quantity(
             update_furniture_form.furniture_quantity.data)
         furniture.set_furniture_category(
@@ -378,6 +490,7 @@ def update_furniture(id):
 
         furniture = furniture_dict.get(id)
         update_furniture_form.furniture_type.data = furniture.get_furniture_type()
+        update_furniture_form.furniture_name.data = furniture.get_furniture_name()
         update_furniture_form.furniture_quantity.data = furniture.get_furniture_quantity()
         update_furniture_form.furniture_category.data = furniture.get_furniture_category()
         update_furniture_form.furniture_status.data = furniture.get_furniture_status()
@@ -385,7 +498,6 @@ def update_furniture(id):
         update_furniture_form.furniture_remarks.data = furniture.get_furniture_remarks()
 
         return render_template('updateFurniture.html', form=update_furniture_form)
-
 
 @app.route('/updatePayment/<int:id>/', methods=['GET', 'POST'])
 def update_payment(id):
@@ -406,7 +518,6 @@ def update_payment(id):
         db.close()
 
         return redirect(url_for('retrieve_payment'))
-
     else:
         payment_dict = {}
         db = shelve.open('payment.db', 'r')
@@ -422,19 +533,6 @@ def update_payment(id):
         return render_template('updatePayment.html', form=update_payment_form)
 
 
-@app.route('/deleteUser/<int:id>', methods=['POST'])
-def delete_user(id):
-    users_dict = {}
-    db = shelve.open('user.db', 'w')
-    users_dict = db['Users']
-
-    users_dict.pop(id)
-
-    db['Users'] = users_dict
-    db.close()
-
-    return redirect(url_for('retrieve_users'))
-
 
 @app.route('/deleteCustomer/<int:id>', methods=['POST'])
 def delete_customer(id):
@@ -447,7 +545,6 @@ def delete_customer(id):
     db.close()
 
     return redirect(url_for('retrieve_customers'))
-
 
 @app.route('/deleteFurniture/<int:id>', methods=['POST'])
 def delete_furniture(id):
@@ -462,7 +559,6 @@ def delete_furniture(id):
 
     return redirect(url_for('retrieve_furniture'))
 
-
 @app.route('/deletePayment/<int:id>', methods=['POST'])
 def delete_payment(id):
     payment_dict = {}
@@ -475,7 +571,6 @@ def delete_payment(id):
     db.close()
 
     return redirect(url_for('retrieve_payment'))
-
 
 @app.route('/createOrder', methods=['GET', 'POST'])
 def create_order():
@@ -498,7 +593,6 @@ def create_order():
         return redirect(url_for('retrieve_orders'))
     return render_template('createOrder.html', form=create_order_form)
 
-
 @app.route('/retrieveOrders')
 def retrieve_orders():
     orders_dict = {}
@@ -512,7 +606,6 @@ def retrieve_orders():
         orders_list.append(order)
 
     return render_template('retrieveOrders.html', count=len(orders_list), orders_list=orders_list)
-
 
 @app.route('/updateOrder/<id>', methods=['GET', 'POST'])
 def update_order(id):
@@ -546,7 +639,6 @@ def update_order(id):
 
         return render_template('updateOrder.html', form=update_order_form)
 
-
 @app.route('/deleteOrder/<id>', methods=['POST'])
 def delete_order(id):
     order_dict = {}
@@ -559,7 +651,6 @@ def delete_order(id):
     db.close()
 
     return redirect(url_for('retrieve_orders'))
-
 
 @app.route('/createReport', methods=['GET', 'POST'])
 def create_report():
@@ -574,33 +665,17 @@ def create_report():
             print("Error in submiting report")
 
         report = Report.Report(
-            form.email.data, form.issue.data, form.remarks.data)
+            form.report_id.data, form.customer_id.data, form.employee_id.data, form.item_id.data, form.quantity.data,
+            form.total_price.data, form.report_date.data, form.report_type.data, form.remarks.data)
         report_dict[report.get_report_id()] = report
         db['Report'] = report_dict
 
         db.close()
-
         return redirect(url_for('retrieve_reports'))
-
     return render_template('createReport.html', form=form)
 
-
-@app.route('/deleteReport/<int:id>', methods=['POST'])
-def delete_Report(id):
-    report_dict = {}
-    db = shelve.open('report.db', 'w')
-    report_dict = db['Report']
-
-    report_dict.pop(id)
-
-    db['Report'] = report_dict
-    db.close()
-
-    return redirect(url_for('retrieve_report'))
-
-
-@app.route('/retrieveReport')
-def retrieve_report():
+@app.route('/retrieveReports')
+def retrieve_reports():
     report_dict = {}
     db = shelve.open('report.db', 'r')
     report_dict = db['Report']
@@ -611,26 +686,31 @@ def retrieve_report():
         report = report_dict.get(key)
         report_list.append(report)
 
-    return render_template('retrieveReport.html', count=len(report_list), customers_list=report_list)
+    return render_template('retrieveReports.html', count=len(report_list), report_list=report_list)
 
-
-@app.route('/updateReport/<int:id>/', methods=['GET', 'POST'])
+@app.route('/updateReport/<id>', methods=['GET', 'POST'])
 def update_report(id):
-    Update_Report_Form = ReportForm(request.form)
-    if request.method == 'POST' and Update_Report_Form.validate():
+    form = ReportForm(request.form)
+    if request.method == 'POST' and form.validate():
         report_dict = {}
         db = shelve.open('report.db', 'w')
         report_dict = db['Report']
 
         report = report_dict.get(id)
-        report.set_email(Update_Report_Form.email.data)
-        report.set_issue(Update_Report_Form.issue.data)
-        report.set_remarks(Update_Report_Form.remarks.data)
+        report.set_report_id(form.report_id.data)
+        report.set_customer_id(form.customer_id.data)
+        report.set_employee_id(form.employee_id.data)
+        report.set_item_id(form.item_id.data)
+        report.set_quantity(form.quantity.data)
+        report.set_total_price(form.total_price.data)
+        report.set_report_date(form.report_date.data)
+        report.set_report_type(form.report_type.data)
+        report.set_remarks(form.remarks.data)
 
         db['Report'] = report_dict
         db.close()
 
-        return redirect(url_for('retrieve_report'))
+        return redirect(url_for('retrieve_reports'))
     else:
         report_dict = {}
         db = shelve.open('report.db', 'r')
@@ -638,378 +718,30 @@ def update_report(id):
         db.close()
 
         report = report_dict.get(id)
-        Update_Report_Form.email.data = report.get_email()
-        Update_Report_Form.issue.data = report.get_issue()
-        Update_Report_Form.remarks.data = report.get_remarks()
-
-        return render_template('updatereport.html', form=Update_Report_Form)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-
-        # checks if the login info is for a customer
-        if check_credentials(username, password):
-            # throws you back to the products page if the login is correct
-            session['username'] = username
-            return redirect(url_for('products'))
-
-        # checks if the login info is for an admin
-        elif is_admin(username, password):
-            # throws you back to the admin page if the login is correct
-            session['admin'] = True
-            return redirect(url_for('home'))
-
-        else:
-            # this will display an error if the login is wrong
-            error = 'Incorrect username/password. Try again.'
-
-    return render_template('login.html', error=error)
-
-
-
-def check_credentials(username, password):
-    # reads the file to make sure it's good
-    with open('customercredentials.txt', 'r') as file:
-        for line in file:
-            stored_username, stored_password = line.strip().split(':')
-            if username == stored_username and password == stored_password:
-                return True
-    return False
-
-
-def is_admin(username, password):
-    filename = "adminslogin.txt"
-    existence(filename)
-    with open(filename, "r") as file:
-        for line in file:
-            parts = line.strip().split(", ")
-            if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                    1].strip():
-                return True
-    return False
-
-
-# Reads from a file
-def read_credentials_file(filename):
-    existence(filename)
-    with open(filename, "r") as file:
-        return file.readlines()
-# this one writes both user and admin you should refactor this if you do not want it
-
-
-def write_credentials(filename, username, password, is_admin=False):
-    with open(filename, "a+") as file:
-        if is_admin:
-            file.write(f"Username: {username}, Password: {password}\n")
-        else:
-            file.write(f"Username: {username}, Password: {password}\n")
-# this deletes from the logins file a bit messy but who cares
-
-
-def delete_credentials(filename, credentials):
-    with open(filename, "r") as file:
-        lines = file.readlines()
-    with open(filename, "w") as file:
-        for line in lines:
-            if not any(cred.strip() in line.strip() for cred in credentials):
-                file.write(line)
-
-
-# these two functions basically have the same function but its for different users (very uncompact and trash but whatever)
-def is_admin_username(username):
-    filename = "adminslogin.txt"
-    existence(filename)
-    with open(filename, "r") as file:
-        for line in file:
-            parts = line.strip().split(", ")
-            if len(parts) > 0 and username == parts[0].split(":")[1].strip():
-                return True
-    return False
-
-
-def is_username_existing(username):
-    filename = "login_details.txt"
-    existence(filename)
-    with open(filename, "r") as file:
-        for line in file:
-            parts = line.strip().split(", ")
-            if len(parts) > 0 and len(parts[0].split(":")) > 1 and username == parts[0].split(":")[1].strip():
-                return True
-    return False
-
-
-# this checks if the login is correct by comparing it to the saved logins files on the server or your computer
-def is_valid_credentials(username, password):
-    login_filename = "login_details.txt"
-    admin_filename = "adminslogin.txt"
-
-    # this one checks if you are just a normal customer by running through the login_file which is set for customers
-    with open(login_filename, "r") as login_file:
-        for line in login_file:
-            parts = line.strip().split(", ")
-            if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                    1].strip():
-                return True
-
-    # and this one checks if its an admin login
-    with open(admin_filename, "r") as admin_file:
-        for line in admin_file:
-            parts = line.strip().split(", ")
-            if len(parts) > 1 and username == parts[0].split(":")[1].strip() and password == parts[1].split(":")[
-                    1].strip():
-                return True
-
-    return False
-
-
-@app.route('/view_admin_logins')
-def view_admin_logins():
-    username = request.args.get('username')
-    password = request.args.get('password')
-
-    # Check if admin credentials
-    if is_admin(username, password):
-        return redirect(url_for('home'))
-
-    admin_logins = read_credentials_file("adminslogin.txt")
-    return render_template('view_admin_logins.html', admin_logins=admin_logins)
-
-
-
-def is_customer_username_taken(username):
-    filename = "customercredentials.txt"
-    existence(filename)
-    with open(filename, "r") as file:
-        for line in file:
-            parts = line.strip().split(", ")
-            if len(parts) > 0 and username == parts[0].split(":")[1].strip():
-                return True
-    return False
-
-
-# This is used for registration
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    error = None
-
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        # Check if it's taken
-        if is_username_taken(username) or is_admin_username(username):
-            error = "Username is already taken. Please choose another."
-
-        # Check if it's taken, again
-        elif is_username_existing(username) or is_customer_username_taken(username):
-            error = "Username already exists. Please choose another."
-
-        # You need a password
-        elif not password:
-            error = "Password cannot be empty. Please enter a password."
-
-        else:
-            # Saves to file
-            write_credentials("customercredentials.txt", username, password)
-
-            # Set user as logged in
-            session['username'] = username
-
-            # And redirection
-            return redirect(url_for('products'))
-
-    return render_template('register.html', error=error)
-
-
-def write_credentials(filename, username, password):
-    # adds new login info to customercredentials.txt
-    with open(filename, 'a') as file:
-        file.write(f"{username}:{password}\n")
-
-
-def read_admins_from_file():
-    admins = {}
-    with open('adminslogin.txt', 'r') as file:
-        for line in file:
-            username, password = line.strip().split(', ')
-            admins[username] = password
-    return admins
-
-
-def is_admin_username_taken(username):
-    filename = "adminslogin.txt"
-    existence(filename)
-    with open(filename, "r") as file:
-        for line in file:
-            parts = line.strip().split(", ")
-            if len(parts) > 0 and username == parts[0].split(":")[1].strip():
-                return True
-    return False
-
-    # writes logins
-
-
-def write_admins_to_file(admins):
-    with open('adminslogin.txt', 'w') as file:
-        for username, password in admins.items():
-            file.write(f'Username: {username}, Password: {password}\n')
-
-
-# routing
-
-
-# more username checks?
-def is_username_taken(username):
-    # This is just a fatass code
-    existing_usernames = read_credentials_file("login_details.txt")
-    return any(
-        len(parts) > 0 and len(parts[0].split(":")) > 1 and username == parts[0].split(":")[1].strip() for line in
-        existing_usernames for parts in [line.strip().split(", ")])
-# this just shows the admin logins/credentials
-
-
-def view_admin_logins():
-    username = request.args.get('username')
-    password = request.args.get('password')
-
-    # chgeck if iuts an admins credentials
-    if is_admin(username, password):
-        return redirect(url_for('home'))
-
-    admin_logins = read_credentials_file("adminslogin.txt")
-    return render_template('home.html', admin_logins=admin_logins)
-
-
-# bandaid fix
-def create_missing_files():
-    admin_file = 'adminslogin.txt'
-    customer_file = 'customercredentials.txt'
-
-    if not os.path.isfile(admin_file):
-        with open(admin_file, 'w') as file:
-            file.write('')
-    if not os.path.isfile(customer_file):
-        with open(customer_file, 'w') as file:
-            file.write('')
-
-
-# this function is here to create files if they are missing call it an integrity check if you want
-create_missing_files()
-# i know the code sucks
-
-
-def get_admin_credentials():
-    credentials_list = []
-    try:
-        with open("adminslogin.txt", 'r') as file:
-            lines = file.readlines()
-            for line in lines:
-                username, password = map(str.strip, line.split(':'))
-                credentials_list.append(
-                    {'username': username, 'password': password})
-    except FileNotFoundError:
-        # gandle the case where the file is not found
-        pass
-
-    return credentials_list
-
-
-def read_admins_from_file():
-    admins = []
-    with open('adminslogin.txt', 'r') as file:
-        admins = [line.strip() for line in file]
-    return admins
-
-
-def write_admin_to_file(username, password):
-    with open('adminslogin.txt', 'a') as file:
-        file.write(f'Username: {username}, Password: {password}\n')
-
-
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
-    error = None
-    admins = get_admins()
-
-    if request.method == 'POST':
-        new_username = request.form['new_username']
-        new_password = request.form['new_password']
-
-        if new_username in admins:
-            error = 'Username already exists.'
-        else:
-            admins[new_username] = new_password
-            # update the file with the new admin credentials
-            with open('adminslogin.txt', 'a') as file:
-                file.write(
-                    f"Username: {new_username}, Password: {new_password}\n")
-
-    return render_template('home.html', admins=admins, error=error)
-
-
-@app.route('/admin/delete', methods=['POST'])
-def admin_delete():
-    admins = get_admins()
-    delete_admin = request.form.get('delete_admin')
-
-    if delete_admin in admins:
-        del admins[delete_admin]
-        # update the file without the deleted admin credentials
-        with open('adminslogin.txt', 'w') as file:
-            for username, password in admins.items():
-                file.write(f"Username: {username}, Password: {password}\n")
-
-    return redirect(url_for('admin'))
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-# duplicate checker
-
-
-def is_duplicate_username(username, admins):
-    return username in admins
-# edits the file
-@app.route('/logout')
-def logout():
-    # Clear session data
-    session.clear()
-    # Redirect to the home page or any other desired page after logout
-    return redirect(url_for('products'))
-
-@app.route('/admin/edit', methods=['POST'])
-def admin_edit():
-    print(request.form)  # print the form data for debugging
-    error = None
-    if request.method == 'POST':
-        new_username = request.form['new_username']
-        new_password = request.form['new_password']
-
-        admins = get_admins()
-
-        if is_duplicate_username(new_username, admins):
-            error = f"Username '{new_username}' already exists. Please choose a different username."
-        else:
-            admins[new_username] = new_password
-            write_admins_to_file(admins)
-
-    return redirect(url_for('admin', error=error))
-
-# signs you out
-
-
-@app.route('/signout')
-def signout():
-    session.pop('username', None)
-    return redirect(url_for('products'))
-
+        form.report_id.data = report.get_report_id()
+        form.customer_id.data = report.get_customer_id()
+        form.employee_id.data = report.get_employee_id()
+        form.item_id.data = report.get_item_id()
+        form.quantity.data = report.get_quantity()
+        form.total_price.data = report.get_total_price()
+        form.report_date.data = report.get_report_date()
+        form.report_type.data = report.get_report_type()
+        form.remarks.data = report.get_remarks()
+
+        return render_template('updateReport.html', form=form)
+
+@app.route('/deleteReport/<id>', methods=['POST'])
+def delete_report(id):
+    report_dict = {}
+    db = shelve.open('report.db', 'w')
+    report_dict = db['Report']
+
+    report_dict.pop(id)
+
+    db['Report'] = report_dict
+    db.close()
+
+    return redirect(url_for('retrieve_reports'))
 
 if __name__ == '__main__':
     app.run(debug=True)

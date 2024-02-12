@@ -180,38 +180,38 @@
 
 </style>
 <div class="section__container nav__links">
-  <span><a href="{{ url_for('products') }}">HOME</a></span>
-  <span><a href="{{ url_for('living_room') }}">LIVING ROOM</a></span>
-  <span><a href="{{ url_for('dining_room') }}">DINING ROOM</a></span>
-  <span><a href="{{ url_for('office') }}">OFFICE</a></span>
-  <span><a href="{{ url_for('bedroom') }}">BEDROOM</a></span>
-  <span><a href="{{ url_for('contact_us') }}">CONTACT US</a></span>
-  
-  {% if 'username' in session %}
-  <div class="dropdown">
-      <span><a href="#" class="dropbtn">ACCOUNT</a></span>
-      <div class="dropdown-content">
-        <ul>
-          <li><a href="{{ url_for('account') }}">My Account</a></li>
-          <li><a href="{{ url_for('signout') }}" class="signin-btn">Log Out</a></li>
-        </ul>
-      </div>
-  </div>
-  {% elif 'admin' in session %}
-  <div class="dropdown">
-      <span><a href="#" class="dropbtn">ACCOUNT</a></span>
-      <div class="dropdown-content">
-        <ul>
-          <li><a href="{{ url_for('account') }}">My Account</a></li>
-          <li><a href="{{ url_for('signoutadmin') }}" class="signin-btn">Log Out</a></li>
-          <li><a href="{{ url_for('home') }}">Admin Panel</a></li>
-        </ul>
-      </div>
-  </div>
-  {% else %}
-  <span><a href="/login">LOGIN</a></span>
-  {% endif %}
-  <span>
+    <span><a href="{{ url_for('products') }}">HOME</a></span>
+    <span><a href="{{ url_for('living_room') }}">LIVING ROOM</a></span>
+    <span><a href="{{ url_for('dining_room') }}">DINING ROOM</a></span>
+    <span><a href="{{ url_for('office') }}">OFFICE</a></span>
+    <span><a href="{{ url_for('bedroom') }}">BEDROOM</a></span>
+    <span><a href="{{ url_for('contact_us') }}">CONTACT US</a></span>
+
+    {% if 'username' in session %}
+    <div class="dropdown">
+        <span><a href="#" class="dropbtn">ACCOUNT</a></span>
+        <div class="dropdown-content">
+            <ul>
+                <li><a href="{{ url_for('account') }}">My Account</a></li>
+                <li><a href="{{ url_for('signout') }}" class="signin-btn">Log Out</a></li>
+            </ul>
+        </div>
+    </div>
+    {% elif 'admin' in session %}
+    <div class="dropdown">
+        <span><a href="#" class="dropbtn">ACCOUNT</a></span>
+        <div class="dropdown-content">
+            <ul>
+                <li><a href="{{ url_for('account') }}">My Account</a></li>
+                <li><a href="{{ url_for('signoutadmin') }}" class="signin-btn">Log Out</a></li>
+                <li><a href="{{ url_for('home') }}">Admin Panel</a></li>
+            </ul>
+        </div>
+    </div>
+    {% else %}
+    <span><a href="/login">LOGIN</a></span>
+    {% endif %}
+    <span>
     <a href="/cart">
       <i class="ri-shopping-cart-2-line"></i>
     </a>

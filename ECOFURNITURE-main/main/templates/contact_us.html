@@ -467,6 +467,189 @@
           grid-template-columns: repeat(2, 1fr);
         }
       }
+
+      :root {
+    --primary-color: #f59e1d;
+    --primary-color-dark: #fbbf24;
+    --secondary-color: #2a80b3;
+    --text-dark: #333333;
+    --text-light: #f5f5f5;
+    --white: #ffffff;
+    --max-width: 1200px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .section__container {
+    max-width: var(--max-width);
+    margin: auto;
+    padding: 5rem 1rem;
+  }
+
+  .section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+
+  .section__title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  body {
+    font-family: "Poppins", sans-serif;
+  }
+
+  .logo__header {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .logo__header img {
+    max-width: 150px;
+  }
+
+  .contact__us {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .contact__us p {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: var(--text-dark);
+    cursor: pointer;
+  }
+
+  .contact__us i {
+    font-size: 1rem;
+  }
+
+  nav {
+    background-color: var(--primary-color);
+  }
+
+  .nav__links {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .nav__links a {
+    font-size: 0.9rem;
+    color: var(--white);
+    transition: 0.3s;
+  }
+
+  .nav__links a:hover {
+    color: var(--secondary-color);
+  }
+
+  .nav__links i {
+    font-size: 1.2rem;
+  }
+
+  header {
+    min-height: 30rem;
+    background-image: url("assets/header-bg.jpg");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .header__container {
+    height: 30rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    color: var(--text-dark);
+  }
+
+  .header__container h1 {
+    font-size: 4rem;
+  }
+
+  .header__container button {
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    color: var(--white);
+    background-color: var(--primary-color);
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .header__container button:hover {
+    background-color: var(--primary-color-dark);
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--primary-color);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .dropdown-content ul {
+    list-style-type: none; /* Remove the default list item bullets */
+    padding: 0; /* Remove any default padding */
+  }
+  .signin-btn {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+  }
+
+
+
+
+
     </style>
     <title>EcoFurniture | Products</title>
   </head>
@@ -479,7 +662,44 @@
       </div>
     </div>
     <nav>
-      {% block navbar %} {% include 'includes/product_navbar.html' %} {% endblock %}
+      {% block navbar %}
+      <div class="section__container nav__links">
+        <span><a href="/products">HOME</a></span>
+        <span><a href="/living_room">PRODUCTS</a></span>
+        <span><a href="/contact_us">CONTACT US</a></span>
+
+  {% if 'username' in session %}
+  <div class="dropdown">
+      <span><a href="#" class="dropbtn">ACCOUNT</a></span>
+      <div class="dropdown-content">
+        <ul>
+          <li><a href="{{ url_for('account') }}">Change Password</a></li>
+          <li><a href="{{ url_for('signout') }}" class="signin-btn">Log Out</a></li>
+        </ul>
+      </div>
+  </div>
+  {% elif 'admin' in session %}
+  <div class="dropdown">
+      <span><a href="#" class="dropbtn">ACCOUNT</a></span>
+      <div class="dropdown-content">
+        <ul>
+          <li><a href="{{ url_for('account') }}">Change Password</a></li>
+          <li><a href="{{ url_for('signoutadmin') }}" class="signin-btn">Log Out</a></li>
+          <li><a href="{{ url_for('home') }}">Admin Panel</a></li>
+        </ul>
+      </div>
+  </div>
+  {% else %}
+  <span><a href="/login">LOGIN</a></span>
+  {% endif %}
+  <span>
+        <span>
+          <a href="/cart">
+            <i class="ri-shopping-cart-2-line"></i>
+          </a>
+        </span>
+      </div>
+      {% endblock %}
     </nav>
     <header>
       <div class="section__container header__container">

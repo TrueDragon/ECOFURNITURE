@@ -14,6 +14,12 @@ from flask import request
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
+@app.route('/retrieveReport')
+def retrieveReport():
+    return render_template('retrieveReport.html')
+
+
+
 @app.route('/createDiscount', methods=['GET', 'POST'])
 def create_discount():
     discount_form = DiscountForm(request.form)

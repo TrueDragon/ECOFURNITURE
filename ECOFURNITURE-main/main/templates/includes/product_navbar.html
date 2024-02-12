@@ -192,7 +192,7 @@
       <span><a href="#" class="dropbtn">ACCOUNT</a></span>
       <div class="dropdown-content">
         <ul>
-          <li><a href="{{ url_for('account') }}">My Account</a></li>
+          <li><a href="{{ url_for('account') }}">Change Password</a></li>
           <li><a href="{{ url_for('signout') }}" class="signin-btn">Log Out</a></li>
         </ul>
       </div>
@@ -202,7 +202,7 @@
       <span><a href="#" class="dropbtn">ACCOUNT</a></span>
       <div class="dropdown-content">
         <ul>
-          <li><a href="{{ url_for('account') }}">My Account</a></li>
+          <li><a href="{{ url_for('account') }}">Change Password</a></li>
           <li><a href="{{ url_for('signoutadmin') }}" class="signin-btn">Log Out</a></li>
           <li><a href="{{ url_for('home') }}">Admin Panel</a></li>
         </ul>
@@ -212,7 +212,7 @@
   <span><a href="/login">LOGIN</a></span>
   {% endif %}
   <span>
-    <a href="#">
+    <a href="/cart">
       <i class="ri-shopping-cart-2-line"></i>
     </a>
   </span>

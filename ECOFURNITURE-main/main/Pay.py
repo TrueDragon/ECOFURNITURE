@@ -47,4 +47,3 @@ class Payment:
         return self.__cvv
 
 
-

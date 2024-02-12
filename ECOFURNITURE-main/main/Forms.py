@@ -2,6 +2,10 @@ from wtforms import Form, StringField, RadioField, SelectField, TextAreaField, I
 from wtforms.fields import EmailField, DateField
 from wtforms.widgets import NumberInput
 
+
+class DiscountForm(Form):
+    code = StringField('Discount code', [validators.Length(min=1, max=150), validators.DataRequired()])
+    amount = IntegerField('Discount amount', [validators.NumberRange(min=1, max=150), validators.DataRequired()])
 class CreateUserForm(Form):
     first_name = StringField('Employee Name', [validators.Length(min=1, max=16), validators.DataRequired()])
     last_name = StringField('Password', [validators.Length(min=1, max=150), validators.DataRequired()])

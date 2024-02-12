@@ -251,7 +251,6 @@
         <span><a href="/dining_room">DINING ROOM</a></span>
         <span><a href="/office">OFFICE</a></span>
         <span><a href="/bedroom">BEDROOM</a></span>
-        <span><a href="/light">LIGHT</a></span>
         <span><a href="/contact_us">CONTACT US</a></span>
         <span><a href="/login">LOGIN</a></span>
         <span>
@@ -266,25 +265,43 @@
     <div class="form">
     <h1 class="display-4"> </h1>
     <br>
-        <div class="form-container">
-      <div class="form-left">
-        <!-- Content for div 1 -->
-        cart stuff
+      <div class="form-container">
+        <div class="form-left">
+            <!-- Content for div 1 -->
+            <!-- Add content related to cart items here -->
+            <h1>Cart Items</h1>
+            <!-- Example: -->
+            <ul>
+                <li>Item 1: $50</li>
+                <li>Item 2: $50</li>
+            </ul>
+        </div>
+        <div class="form-right">
+            <!-- Content for div 2 -->
+            <!-- Display order summary and discount form here -->
+            <h2>Order Summary</h2>
+            <p>Subtotal: ${{ subtotal_value }}</p>
+            <p>Shipping Fee: ${{ shipping_fee }}</p>
+            <form method="POST" action="/cart">
+              <input type="text" name="discount_code" placeholder="Enter discount code">
+              <button type="submit">Apply Discount</button>
+            </form>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul>
+                  {% for message in messages %}
+                    <li>{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+            <p>Total: ${{ subtotal_value + shipping_fee }}</p>
+            <!-- Add checkout button or link here -->
+            <form action="/createpayment" method="post">
+                <button type="submit">CHECKOUT</button>
+            </form>
+        </div>
       </div>
-      <div class="form-right">
-        <!-- Content for div 2 -->
-        <h1>Order summary</h1>
-        <h2>Subtotal: {{ subtotal_value }} </h2>
-        <h2>Shipping Fee: {{ shipping_fee }} </h2>
-        <h2>Discount: </h2>
-        <h2>Total: {{ subtotal_value + shipping_fee }} </h2>
-          <a href="/createpayment">
-             <button>
-            CHECKOUT
-             </button>
-          </a>
-      </div>
-    </div>
     <br>
     <br><br><br><br><br><br><br><br><br>
 

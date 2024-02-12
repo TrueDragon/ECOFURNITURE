@@ -1,16 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, get_flashed_messages
-from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm, \
-    DiscountForm
 import os
 import shelve
+
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+
 import Customer
+import Discount
 import Furniture
 import Order
 import Pay
 import Report
-import os
-import Discount
 import User
+from Forms import CreateUserForm, CreateCustomerForm, CreateFurnitureForm, PaymentForm, ReportForm, OrderForm, \
+    DiscountForm
 
 app = Flask(__name__)
 # just some security
@@ -88,6 +89,32 @@ def cart():
     return render_template('cart.html', subtotal_value=subtotal_value, shipping_fee=shipping_fee)
 
 
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    furniture_id = request.form['id']
+    print("Furniture id from form data: " + furniture_id)
+
+    db = shelve.open('furniture.db', 'r')
+    furniture_dict = db['Furniture']
+    db.close()
+
+    print("Furniture ids in database: " + ", ".join(
+        [str(furniture.get_furniture_id()) for furniture in furniture_dict.values()]))
+
+    for furniture in furniture_dict.values():
+        if furniture.get_furniture_id() == int(furniture_id):
+            cart = session.get('cart', {})
+            cart[furniture_id] = {
+                'name': furniture.get_furniture_name(),
+                'price': furniture.get_furniture_price(),
+                'quantity': 1
+            }
+            session['cart'] = cart
+
+            return render_template('cart.html', cart=cart)
+    else:
+        return "No furniture found with id " + furniture_id, 400
+
 
 @app.route('/living_room')
 def living_room():
@@ -109,7 +136,6 @@ def living_room():
             furniture_list.append(furniture)
 
     return render_template('living_room.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
-
 
 
 @app.route('/bedroom')
@@ -201,6 +227,7 @@ def contact_us():
 def home():
     admins = get_admins()
     return render_template('home.html', admins=admins)
+
 
 @app.route('/confirm')
 def confirm():
@@ -330,7 +357,6 @@ def create_discount():
 
         return redirect(url_for('retrieve_discount'))
     return render_template('createDiscount.html', form=discount_form)
-
 
 
 @app.route('/retrieveUsers')
@@ -1263,6 +1289,7 @@ def admin_edit():
             write_admins_to_file(admins)
 
     return redirect(url_for('admin', error=error))
+
 
 @app.route('/signout')
 def signout():

@@ -7,6 +7,7 @@
         gap: 20px;
     }
     .furniture-item {
+        position: relative;
         border: 1px solid #ccc;
         padding: 20px;
         border-radius: 5px;
@@ -17,6 +18,18 @@
     }
     .furniture-item p {
         margin: 0;
+    }
+
+    button, .add-to-cart img {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        background-color: white;
+        width: 50px;
+        height: 50px;
+        border: none;
     }
 
     .dropdown-container {
@@ -74,7 +87,7 @@
 
 
 </style>
-<!--prob works-->
+<!--prob works?-->
 <!--DO NOT PUT SPECIFIC HTML STUFF HERE-->
 <!--THIS IS ONLY TO PULL FROM DATABASE-->
 
@@ -134,6 +147,9 @@
         {% endif %}
         <p>Quantity: {{ furniture.get_furniture_quantity() }}</p>
         <p>Unit Price: S${{ furniture.get_furniture_price() }}</p>
+        <button class="add-to-cart">
+            <img src="../static/assets/cart_logo.png" alt="Add to Cart">
+        </button>
     </div>
     {% endif %}
     {% endfor %}

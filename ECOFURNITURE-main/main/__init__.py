@@ -1259,10 +1259,6 @@ def admin_edit():
 
     return redirect(url_for('admin', error=error))
 
-
-# signs you out
-
-
 @app.route('/signout')
 def signout():
     session.pop('username', None)

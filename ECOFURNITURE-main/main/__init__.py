@@ -113,6 +113,12 @@ def contact():
 
 @app.route('/dining_room')
 def dining_room():
+    query = request.args.get('query', '')
+    reset = request.args.get('reset')
+
+    if reset:
+        query = ''
+
     furniture_dict = {}
     db = shelve.open('furniture.db', 'r')
     furniture_dict = db['Furniture']
@@ -121,9 +127,10 @@ def dining_room():
     furniture_list = []
     for key in furniture_dict.keys():
         furniture = furniture_dict.get(key)
-        furniture_list.append(furniture)
+        if query.lower() in furniture.get_furniture_name().lower():
+            furniture_list.append(furniture)
 
-    return render_template('dining_room.html', count=len(furniture_list), furniture_list=furniture_list)
+    return render_template('dining_room.html', count=len(furniture_list), furniture_list=furniture_list, query=query)
 
 
 @app.route('/office')

@@ -7,6 +7,7 @@
         gap: 20px;
     }
     .furniture-item {
+        position: relative;
         border: 1px solid #ccc;
         padding: 20px;
         border-radius: 5px;
@@ -19,6 +20,18 @@
         margin: 0;
     }
 
+    button, .add-to-cart img {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        background-color: white;
+        width: 50px;
+        height: 50px;
+        border: none;
+    }
+
     .dropdown-container {
         display: flex;
         justify-content: space-between;
@@ -27,36 +40,36 @@
     }
 
     .search-bar {
-        display: flex;
-        justify-content: space-between;
-        padding: 25px;
-        margin-bottom: 25px;
-        background-color: #f8f8f8;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
+    display: flex;
+    margin-bottom: 25px;
+    padding: 25px;
+    padding-bottom: 25px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
 
     .search-bar input[type="text"] {
-        flex-grow: 1;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 16px;
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
     }
 
     .search-bar input[type="submit"] {
-        margin-left: 10px; /* Space between the input and the buttons */
-        padding: 10px 20px; /* Larger horizontal padding for a wider button */
-        border: none;
-        background-color: #f59e1d;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 4px;
+    margin-left: 10px; /* Space between the input and the buttons */
+    padding: 10px 20px; /* Larger horizontal padding for a wider button */
+    border: none;
+    background-color: #007BFF; /* Blue background */
+    color: white; /* White text */
+    font-size: 16px;
+    cursor: pointer; /* Hand cursor on hover */
+    border-radius: 4px;
     }
 
     .search-bar input[type="submit"]:hover {
-        background-color: ;
+    background-color: #0056b3; /* Darker blue on hover */
     }
 
     #typeFilter, #sortOrder, #sortCategory {
@@ -74,12 +87,13 @@
 
 
 </style>
-
+<!--prob works?-->
 <!--DO NOT PUT SPECIFIC HTML STUFF HERE-->
 <!--THIS IS ONLY TO PULL FROM DATABASE-->
+
 <div class="search-bar">
     <form method="get">
-        <input type="text" name="query" placeholder="Furniture Name">
+        <input type="text" name="query" placeholder="Search furniture" value="{{ query }}">
         <input type="submit" value="Search">
         <input type="submit" name="reset" value="Reset">
     </form>
@@ -112,6 +126,7 @@
 <div class="furniture-grid">
     {% for furniture in furniture_list %}
     {% if furniture.get_furniture_category() != "Old" and furniture.get_furniture_status() != "Not For Sale" %}
+
     <div class="furniture-item" data-type="{{ furniture.get_furniture_type() }}"
          data-price="{{ furniture.get_furniture_price() }}" data-category="{{ furniture.get_furniture_category() }}">
         <h2>{{ furniture.get_furniture_name() }}</h2>
@@ -132,6 +147,13 @@
         {% endif %}
         <p>Quantity: {{ furniture.get_furniture_quantity() }}</p>
         <p>Unit Price: S${{ furniture.get_furniture_price() }}</p>
+
+        <form method="POST" action="/add_to_cart">
+            <input type="hidden" name="id" value="{{ furniture.id }}">
+            <button type="submit" class="add-to-cart">
+                <img src="../static/assets/cart_logo.png" alt="Add to Cart">
+            </button>
+        </form>
     </div>
     {% endif %}
     {% endfor %}
@@ -140,6 +162,7 @@
 
 
 <!--JAVASCRIPT STUFF FOR THE FILTERS-->
+
 <script>
     document.getElementById('typeFilter').addEventListener('change', function() {
         var type = this.value;
@@ -208,5 +231,6 @@
         filterItemsByCategoryAndType(document.getElementById('sortCategory').value);
     });
 
+});
 
 </script>

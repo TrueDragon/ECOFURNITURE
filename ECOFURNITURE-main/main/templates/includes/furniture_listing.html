@@ -147,9 +147,13 @@
         {% endif %}
         <p>Quantity: {{ furniture.get_furniture_quantity() }}</p>
         <p>Unit Price: S${{ furniture.get_furniture_price() }}</p>
-        <button class="add-to-cart">
-            <img src="../static/assets/cart_logo.png" alt="Add to Cart">
-        </button>
+
+        <form method="POST" action="/add_to_cart">
+            <input type="hidden" name="id" value="{{ furniture.id }}">
+            <button type="submit" class="add-to-cart">
+                <img src="../static/assets/cart_logo.png" alt="Add to Cart">
+            </button>
+        </form>
     </div>
     {% endif %}
     {% endfor %}
@@ -158,6 +162,7 @@
 
 
 <!--JAVASCRIPT STUFF FOR THE FILTERS-->
+
 <script>
     document.getElementById('typeFilter').addEventListener('change', function() {
         var type = this.value;
@@ -226,5 +231,6 @@
         filterItemsByCategoryAndType(document.getElementById('sortCategory').value);
     });
 
+});
 
 </script>

@@ -25,10 +25,3 @@ class Discount:
 
     def get_amount(self):
         return self.__amount
-
-
-
-
-
-
-

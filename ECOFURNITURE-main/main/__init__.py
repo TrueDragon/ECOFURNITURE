@@ -674,12 +674,15 @@ def create_order():
         except:
             print("Error in retriving Orders from order.db")
 
-        order = Order.Order(create_order_form.customer_id.data, create_order_form.order_id.data,
+        order = Order.Order(create_order_form.customer_id.data,
                             create_order_form.item_id.data, create_order_form.item_quantity.data)
         orders_dict[order.get_customer_id()] = order
         db['Orders'] = orders_dict
 
         db.close()
+
+        session['order_created'] = 'item id: ' + order.get_item_id() + ', item quantity: ' + order.get_item_quantity()
+
         return redirect(url_for('retrieve_orders'))
     return render_template('createOrder.html', form=create_order_form)
 
@@ -709,12 +712,13 @@ def update_order(id):
 
         order = orders_dict.get(id)
         order.set_customer_id(update_order_form.customer_id.data)
-        order.set_order_id(update_order_form.order_id.data)
         order.set_item_id(update_order_form.item_id.data)
         order.set_item_quantity(update_order_form.item_quantity.data)
 
         db['Orders'] = orders_dict
         db.close()
+
+        session['order_updated'] = 'item id: ' + order.get_item_id() + ', item quantity: ' + order.get_item_quantity()
 
         return redirect(url_for('retrieve_orders'))
     else:
@@ -725,7 +729,6 @@ def update_order(id):
 
         order = orders_dict.get(id)
         update_order_form.customer_id.data = order.get_customer_id()
-        update_order_form.order_id.data = order.get_order_id()
         update_order_form.item_id.data = order.get_item_id()
         update_order_form.item_quantity.data = order.get_item_quantity()
 
@@ -738,10 +741,12 @@ def delete_order(id):
     db = shelve.open('order.db', 'w')
     orders_dict = db['Orders']
 
-    orders_dict.pop(id)
+    order = orders_dict.pop(id)
 
     db['Orders'] = orders_dict
     db.close()
+
+    session['order_deleted'] = 'item id: ' + order.get_item_id() + ', item quantity: ' + order.get_item_quantity()
 
     return redirect(url_for('retrieve_orders'))
 

@@ -34,7 +34,7 @@ def signoutadmin():
 def existence(filename):
     if not os.path.exists(filename):
         with open(filename, "w"):
-            pass  # Just create an empty file if it doesn't exist
+            pass  # Just create an empty file if it doesn't existt
 
 
 def get_admins():

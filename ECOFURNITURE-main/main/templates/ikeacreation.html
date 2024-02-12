@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}EcoFurniture - IKEA Creation{% endblock %}
+
+{% block content %}
+  <h1 class="display-4">Account Creation</h1>
+
+  <form method="POST" action="{{ url_for('ikeaCreation') }}">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username:</label>
+      <input type="text" class="form-control" id="username" name="username" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password:</label>
+      <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    <div class="mb-3">
+      <label for="user_type" class="form-label">User Type:</label>
+      <select class="form-select" id="user_type" name="user_type" required>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Create User</button>
+  </form>
+
+  <a href="{{ url_for('retrieve_users') }}" class="btn btn-secondary mt-3">Back to Retrieve Users</a>
+{% endblock %}

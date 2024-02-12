@@ -5,27 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cb703e3-1e1f-467e-b060-1e134aeb665d" name="Changes" comment="Init commit for updated login system">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/pythonProject10.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pythonProject10.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/ECOFURNITURE-main/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/Discount.py" beforeDir="false" afterPath="$PROJECT_DIR$/ECOFURNITURE-main/main/Discount.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/Forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/ECOFURNITURE-main/main/Forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/Pay.py" beforeDir="false" afterPath="$PROJECT_DIR$/ECOFURNITURE-main/main/Pay.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/ECOFURNITURE-main/main/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/customer.db.bak" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/customer.db.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/customer.db.dir" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/templates/cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/ECOFURNITURE-main/main/templates/cart.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/templates/includes/product_navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/ECOFURNITURE-main/main/templates/includes/product_navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/templates/retrieveUsers.html" beforeDir="false" afterPath="$PROJECT_DIR$/ECOFURNITURE-main/main/templates/retrieveUsers.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/user.db.bak" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/user.db.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/user.db.dir" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/userbear.db.bak" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/userbear.db.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECOFURNITURE-main/main/userbear.db.dir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +38,30 @@
     &quot;git-widget-placeholder&quot;: &quot;master&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration name="__init__" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="pythonProject10" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\latif\AppData\Local\Programs\Python\Python311\python.exe" />
+      <option name="SDK_NAME" value="Python 3.11" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ECOFURNITURE-main/main" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ECOFURNITURE-main/main/__init__.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

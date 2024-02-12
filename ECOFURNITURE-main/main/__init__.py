@@ -689,7 +689,7 @@ def create_order():
         except:
             print("Error in retriving Orders from order.db")
 
-        order = Order.Order(create_order_form.customer_id.data, create_order_form.order_id.data,
+        order = Order.Order(create_order_form.customer_id.data,
                             create_order_form.item_id.data, create_order_form.item_quantity.data)
         orders_dict[order.get_customer_id()] = order
         db['Orders'] = orders_dict
@@ -722,7 +722,6 @@ def update_order(id):
 
         order = orders_dict.get(id)
         order.set_customer_id(update_order_form.customer_id.data)
-        order.set_order_id(update_order_form.order_id.data)
         order.set_item_id(update_order_form.item_id.data)
         order.set_item_quantity(update_order_form.item_quantity.data)
 
@@ -738,7 +737,6 @@ def update_order(id):
 
         order = orders_dict.get(id)
         update_order_form.customer_id.data = order.get_customer_id()
-        update_order_form.order_id.data = order.get_order_id()
         update_order_form.item_id.data = order.get_item_id()
         update_order_form.item_quantity.data = order.get_item_quantity()
 
